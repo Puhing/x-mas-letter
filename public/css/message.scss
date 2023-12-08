@@ -1,0 +1,195 @@
+.message-page {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    user-select: none;
+    background: url('/img/img_main_background.png');
+    background-position: center top;
+    background-repeat: repeat;
+    background-color: #50abf1;
+
+    .message-con {
+        position: relative;
+        padding: 20px 10px;
+        min-width: 480px;
+        max-width: 600px;
+        height: 80vh;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+        background-image: url('/img/img_street_lamp.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        z-index: 1;
+
+        .title {
+            font-size: 30px;
+            font-weight: 500;
+        }
+        .message-type-btns {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            .type-btn {
+                flex: 1;
+                background-color: #f12139;
+                border-radius: 10px;
+                font-size: 24px;
+                font-weight: 400;
+                color: #fff;
+                padding: 10px 20px;
+                text-align: center;
+
+                cursor: pointer;
+                &:hover {
+                    scale: 1.01;
+                }
+                &:active {
+                    scale: 1.005;
+                }
+                &.clicked {
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .from-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            background-color: #2d2d2d;
+            border-radius: 10px;
+            gap: 10px;
+            margin: 10px 0;
+            .from-txt {
+                padding: 10px 5px;
+                font-size: 20px;
+                font-weight: 400;
+                color: #000;
+                background-color: #50abf1;
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+            }
+
+            .from-input {
+                flex: 1;
+                font-size: 18px;
+                font-weight: 400;
+                padding: 10px 20px;
+                color: #fff;
+
+                background: transparent;
+                border: none;
+            }
+        }
+
+        .text-write-wrap {
+            width: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            &.open {
+                display: flex;
+            }
+            .input-box {
+                margin: 20px 0;
+                height: 50vh;
+                overflow-y: auto;
+                .fr-view {
+                    height: 30vh;
+                }
+            }
+        }
+
+        .voice-record-wrap {
+            width: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px 0;
+            position: relative;
+            gap : 10px;
+            &.open {
+                display: flex;
+            }
+            
+            .record-btn {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                img {
+                    width: 30%;
+                }
+                &:hover {
+                    scale: 1.1;
+                }
+                &:active{
+                    scale: 1.05;
+                }
+            }
+            .info-wrap {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                background-color: #2d2d2d;
+                border-radius: 10px;
+                padding: 10px 20px;
+                width: 60%;
+                position: relative;
+                .indicator {
+                    height: 30px;
+                    background: green;
+                }
+                .time {
+                    color: #fff;
+                    font-size: 20px;
+                    font-weight: 400;
+                    position: absolute;
+                    right: 10px;
+                }
+            }
+        }
+        .message-btm-btns {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            gap: 20px;
+            .btm-btn {
+                font-size: 20px;
+                background-color: #50abf1;
+                border-radius: 10px;
+                color: #fff;
+                padding: 10px 0;
+                flex: 1;
+                cursor: pointer;
+                text-align: center;
+                &.send-btn {
+                    flex: 2;
+                }
+                &:hover {
+                    scale: 1.1;
+                }
+                &:active {
+                    scale: 1.05;
+                }
+            }
+        }
+    }
+}

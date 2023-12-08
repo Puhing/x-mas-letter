@@ -1,0 +1,266 @@
+<%-include('header.ejs')%>
+
+<div class="message-page">
+    <div class="message-con">
+        <div class="title">님에게 편지쓰기</div>
+        <div class="message-type-btns">
+            <div class="type-btn" id="type-btn1" onclick="onClickTypeBtn(1)">텍스트로 남기기</div>
+            <div class="type-btn" id="type-btn2" onclick="onClickTypeBtn(2)">보이스로 남기기</div>
+        </div>
+        <div class="from-box">
+            <div class="from-txt">From</div>
+            <input class="from-input" />
+        </div>
+        <div class="text-write-wrap">
+            <div class="input-box" id="input-box"></div>
+        </div>
+        <div class="voice-record-wrap" onclick="onClickRecordVoice()">
+            <div class="record-btn">
+                <img src="/img/ic_microphone.png" />
+            </div>
+            <div class="info-wrap">
+                <div class="indicator" id="indicator"></div>
+                <div class="time">00:00</div>
+            </div>
+        </div>
+        <div class="message-btm-btns">
+            <div class="btm-btn">이전</div>
+            <div class="btm-btn send-btn" onclick="onClickSend()">메세지 남기기</div>
+        </div>
+    </div>
+</div>
+<script>
+    var tabType = 1;
+    var state = false;
+    var recorder = null;
+    var audio = null,
+        indicator = null;
+    var userId = getCookie('userId');
+    var url = new URL(location.href);
+    var fEditor;
+    var visit;
+    window.onload = function () {
+        visit = url.searchParams.get('visit');
+        indicator = $('#indicator')[0];
+        if (visit) {
+            $.ajax({
+                url: '/mailbox/user_check',
+                async: true,
+                type: 'GET',
+                data: {
+                    user: visit,
+                },
+                success: function (data) {
+                    $('.title')[0].innerHTML = data.user.nickname + '님에게 편지쓰기';
+                },
+                error: function (err) {
+                    console.log('FAILURE : ', err.msg);
+                    window.location.href = '/';
+                },
+            });
+        } else {
+            location.href = '/';
+        }
+        if (userId) {
+            $.ajax({
+                url: '/user/handshake',
+                async: true,
+                type: 'POST',
+                data: {
+                    userId: userId,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $('.from-input').val(data.user.nickname);
+                    } else {
+                        console.log(data.msg);
+                        alert('잠시 후에 다시 시도해주세요.');
+                        window.location.href = '/';
+                    }
+                },
+                error: function (err) {
+                    console.log('FAILURE : ', err.msg);
+                    window.location.href = '/';
+                },
+            });
+        }
+
+        $('.text-write-wrap').addClass('open');
+        $('#type-btn1').addClass('clicked');
+
+        fEditor = new FroalaEditor('#input-box', {
+            imageUploadParam: 'image_param',
+
+            // Set the image upload URL.
+            imageUploadURL: '/upload_image',
+
+            // Additional upload params.
+            imageUploadParams: { id: 'my_editor' },
+
+            // Set request type.
+            imageUploadMethod: 'POST',
+
+            // Set max image size to 5MB.
+            imageMaxSize: 5 * 1024 * 1024,
+
+            // Allow to upload PNG and JPG.
+            imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+
+            events: {
+                'image.beforeUpload': function (images) {
+                    // Return false if you want to stop the image upload.
+                },
+                'image.uploaded': function (response) {
+                    // Image was uploaded to the server.
+                },
+                'image.inserted': function ($img, response) {
+                    // Image was inserted in the editor.
+                },
+                'image.replaced': function ($img, response) {
+                    // Image was replaced in the editor.
+                },
+                'image.error': function (error, response) {},
+            },
+        });
+    };
+
+    function onClickTypeBtn(idx) {
+        if (idx == 1) {
+            $('.voice-record-wrap').removeClass('open');
+            $('#type-btn2').removeClass('clicked');
+
+            $('.text-write-wrap').addClass('open');
+            $('#type-btn1').addClass('clicked');
+            tabType = idx;
+        } else {
+            $('.text-write-wrap').removeClass('open');
+            $('#type-btn1').removeClass('clicked');
+
+            $('.voice-record-wrap').addClass('open');
+            $('#type-btn2').addClass('clicked');
+            tabType = idx;
+        }
+    }
+
+    function onClickSend() {
+        if (tabType == 1) {
+            // text
+            saveText();
+        } else if (tabType == 2) {
+            //voice
+            saveVoice();
+        }
+    }
+
+    function saveText() {
+        let txt = fEditor.html.get();
+        $.ajax({
+            url: '/message/save_text',
+            async: true,
+            type: 'POST',
+            data: {
+                nickname: $('.from-input').val(),
+                content: txt,
+                visit: visit,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 1) {
+                    alert('등록완료');
+                    window.location.reload();
+                } else {
+                    console.log(data.msg);
+                    alert('잠시 후에 다시 시도해주세요.');
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+                alert('잠시 후에 다시 시도해주세요.');
+            },
+        });
+    }
+
+    function onClickRecordVoice() {
+        if (state && recorder) {
+            recorder.stop();
+            state = false;
+            var p = navigator.mediaDevices.getUserMedia({ audio: true });
+            p.then(function (mediaStream) {
+                recorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm' });
+                recorder.addEventListener('dataavailable', ({ data }) => {
+                    console.log('NEW DATA!!22', data);
+                    audio = data;
+                });
+                recorder.start();
+            });
+
+            p.catch(function (err) {
+                console.log(err.name);
+            });
+            return;
+        }
+        var p = navigator.mediaDevices.getUserMedia({ audio: true });
+        p.then(function (mediaStream) {
+            recorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm' });
+            recorder.addEventListener('dataavailable', ({ data }) => {
+                console.log('NEW DATA!!33', data);
+                audio = data;
+            });
+
+            recorder.start();
+            const context = new AudioContext();
+            const source = context.createMediaStreamSource(mediaStream);
+            const analyzer = context.createAnalyser();
+            source.connect(analyzer);
+
+            // The array we will put sound wave data in
+            const array = new Uint8Array(analyzer.fftSize);
+
+            function getPeakLevel() {
+                analyzer.getByteTimeDomainData(array);
+                return array.reduce((max, current) => Math.max(max, Math.abs(current - 127)), 0) / 128;
+            }
+
+            function tick() {
+                const peak = getPeakLevel();
+                indicator.style.width = `${peak * 100}%`;
+                requestAnimationFrame(tick);
+            }
+            tick();
+        });
+
+        p.catch(function (err) {
+            console.log(err.name);
+        });
+
+        state = true;
+    }
+
+    function saveVoice() {
+        var fd = new FormData();
+        fd.append('file', audio);
+        fd.append('nickname', $('.from-input').val());
+        fd.append('visit', visit);
+        $.ajax({
+            url: '/message/save_voice',
+            type: 'POST',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    alert('등록완료');
+                    location.reload();
+                } else {
+                    alert('잠시 후에 다시 시도해주세요.');
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+                alert('잠시 후에 다시 시도해주세요.');
+            },
+        });
+    }
+</script>
+<%-include('footer.ejs')%>

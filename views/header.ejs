@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title><%= title %></title>
+        <link rel="stylesheet" type="text/css" href="/css/index.css?v=1" />
+        <link rel="stylesheet" type="text/css" href="/css/user.css" />
+        <link rel="stylesheet" type="text/css" href="/css/signup.css" />
+        <link rel="stylesheet" type="text/css" href="/css/message.css" />
+        <link rel="stylesheet" type="text/css" href="/css/mailbox.css" />
+        <link href='https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
+        <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/js/froala_editor.pkgd.min.js'></script>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js"
+            integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4"
+            crossorigin="anonymous"
+            async
+        ></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&family=Noto+Sans:wght@100;300;400;500;600;700;800&family=Roboto:wght@100;300;400;500;700;900&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Lato:wght@100;300;400;700;900&family=Noto+Sans:wght@100;300;400;500;600;700;800&family=Roboto:wght@100;300;400;500;700;900&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <script type="text/javascript">
+            function copyElementText(id) {
+                var text = document.getElementById(id).value;
+                var elem = document.createElement('textarea');
+                document.body.appendChild(elem);
+                elem.value = text;
+                elem.select();
+                document.execCommand('copy');
+                document.body.removeChild(elem);
+            }
+            function getUrlParams() {
+                var params = {};
+
+                window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+                    params[key] = value;
+                });
+
+                return params;
+            }
+            function setCookie(name, value, days) {
+                var expires = '';
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/';
+            }
+            function getCookie(name) {
+                var nameEQ = name + '=';
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+            function eraseCookie(name) {
+                document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            }
+        </script>
+    </head>
+    <body>
+        <div class="main">
