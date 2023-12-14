@@ -1,0 +1,134 @@
+<%-include('header.ejs')%>
+<div class="signup-page">
+    <div class="signup-con">
+        <div class="title">어떤 이름으로<br />우체통을 만들겠어요?</div>
+        <div class="input-con">
+            <div class="input-wrap">
+                <div class="input-desc">닉네임</div>
+                <input id="input-nn" value="nickname" onchange="" />
+                <div class="input-alert" id="input-alert-1">필수 항목입니다.</div>
+            </div>
+            <div class="input-wrap">
+                <div class="input-desc">이메일</div>
+                <input id="input-e" value="email" onchange="" />
+                <div class="input-alert" id="input-alert-2">필수 항목입니다.</div>
+            </div>
+        </div>
+        <div class="checkbx-all">
+            <input id="check-all" type="checkbox" onchange="onChangeChkAll()" />
+            <div>전체동의</div>
+        </div>
+        <div class="vertical-line"></div>
+        <div class="checkbx">
+            <input id="check1" type="checkbox" onchange="onChangeChk()" />
+            <div>(필수) 만 14세 이상이에요</div>
+        </div>
+        <div class="checkbx">
+            <input id="check2" type="checkbox" onchange="onChangeChk()" />
+            <div>(필수) 이용약관 및 개인정보수집이용 동의</div>
+        </div>
+        <div class="confirm-btn" onclick="onClickSignup()">계정만들기</div>
+    </div>
+</div>
+<script>
+    const url = new URL(window.location.href);
+    const uid = url.searchParams.get('uid');
+    var nickname = url.searchParams.get('nickname');
+    var email = url.searchParams.get('email');
+    var userId = getCookie('userId');
+    window.onload = function () {
+        if (userId) {
+            $.ajax({
+                url: '/user/handshake',
+                async: true,
+                type: 'POST',
+                data: {
+                    userId: userId,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        location.href = '/mailbox';
+                    } else {
+                    }
+                },
+
+                error: function (err) {
+                    alert('FAILURE : ', err.msg);
+                },
+            });
+        } 
+        
+        if (uid) {
+            console.log(nickname)
+            $('#input-nn')[0].value = nickname;
+            $('#input-e')[0].value = email;
+        } else {
+            alert('먼저 소셜로그인 해주세요.');
+            location.href = '/';
+        }
+        onChangeChk();
+    };
+
+    function onChangeChkAll() {
+        if ($('#check-all')[0].checked == true) {
+            $('#check1')[0].checked = true;
+            $('#check2')[0].checked = true;
+        } else {
+            $('#check1')[0].checked = false;
+            $('#check2')[0].checked = false;
+        }
+        onChangeChk();
+    }
+
+    function onChangeChk() {
+        let check1 = $('#check1')[0].checked;
+        let check2 = $('#check2')[0].checked;
+        if (check1 && check2) {
+            $('.confirm-btn').removeClass('disabled');
+            $('#check-all')[0].checked = true;
+        } else {
+            $('.confirm-btn').addClass('disabled');
+            $('#check-all')[0].checked = false;
+        }
+    }
+
+    function onClickSignup() {
+        let check1 = $('#check1')[0].checked;
+        let check2 = $('#check2')[0].checked;
+        nickname = $('#input-nn').val();
+        email = $('#input-e').val();
+        if (nickname == '') {
+            $('#input-alert-1').addClass('on');
+        }
+        if (email == '') {
+            $('#input-alert-2').addClass('on');
+        }
+        if (check1 && check2 && nickname != '' && email != '') {
+            $.ajax({
+                url: '/user/signup',
+                async: true,
+                type: 'POST',
+                data: {
+                    nickname: nickname,
+                    uid: uid,
+                    email: email,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.userId) {
+                        setCookie('userId', data.userId, 30);
+                        location.href = '/mailbox';
+                    } else {
+                        alert('잠시 후에 다시 시도해주세요.');
+                    }
+                },
+
+                error: function (err) {
+                    alert('FAILURE : ', err.msg);
+                },
+            });
+        }
+    }
+</script>
+<%-include('footer.ejs')%>

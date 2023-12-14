@@ -1,0 +1,116 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans", sans-serif;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.title {
+  width: 100vw;
+  text-align: center;
+  padding-top: 20px;
+  color: #fff;
+}
+
+.login-page {
+  width: 100%;
+  height: 100%;
+  background-image: url('/img/background.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.login-page .main-wrap {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.login-page .main-wrap .top-img {
+  width: 40%;
+  margin-top: 200px;
+}
+.login-page .main-wrap .top-img img {
+  width: 100%;
+}
+.login-page .main-wrap .dday-txt {
+  font-family: "Caveat", cursive;
+  font-weight: 400;
+  font-size: 24px;
+  color: #839489;
+  margin: 10px 0;
+}
+.login-page .main-wrap .login-btns {
+  width: 60%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+.login-page .main-wrap .login-btns .login-btn {
+  width: 100%;
+  border-radius: 20px;
+  padding: 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
+  cursor: pointer;
+}
+.login-page .main-wrap .login-btns .login-btn img {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 30px;
+}
+.login-page .main-wrap .login-btns .login-btn:hover {
+  scale: 1.1;
+}
+.login-page .main-wrap .login-btns .login-btn:active {
+  scale: 1.06;
+}
+.login-page .main-wrap .login-btns .login-btn .login-sns-txt {
+  text-align: center;
+  font-weight: 600;
+  font-size: 17px;
+}
+.login-page .main-wrap .login-btns .login-btn.kakao {
+  color: #371f1f;
+  background-color: #f5e14a;
+}
+.login-page .main-wrap .login-btns .login-btn.kakao mg {
+  width: 18px;
+  height: 18px;
+}
+.login-page .main-wrap .login-btns .login-btn.twitter {
+  color: #fff;
+  background-color: #50abf1;
+}
+.login-page .main-wrap .login-btns .login-btn.twitter img {
+  width: 28px;
+  height: 28px;
+}
+.login-page .main-wrap .login-btns .login-btn.google {
+  color: #7e7e7e;
+  background-color: #fff;
+}/*# sourceMappingURL=index.css.map */

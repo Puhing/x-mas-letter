@@ -1,0 +1,132 @@
+<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    NOT USE
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<%-include('header.ejs')%>
+<script>
+    window.onload = function () {
+        function onClickSubmit() {
+            $.ajax({
+                url: '/user/replacementbattery',
+                async: true,
+                type: 'POST',
+                data: {
+                    // phone: $("#phone").val(),
+                },
+                dataType: 'json',
+                success: function (data) {
+                    alert(data.msg);
+                },
+
+                error: function (err) {
+                    alert('FAILURE : ', err.msg);
+                },
+            });
+        }
+        $('#battery-btn').click(function () {
+            let res = confirm('battery replace ?');
+            if (res) {
+                onClickSubmit();
+            }
+        });
+    };
+    function onClickSatAdd(userId) {
+        let sat = prompt(userId + '번 유저의 조절하실 SAT 개수를 입력해주세요 ex) -111, 909999', '');
+        if (!sat || isNaN(parseFloat(sat))) {
+            return alert('올바른 숫자를 입력해주세요.');
+        }
+        let msg = prompt('이유를 작성해주세요.', '');
+        let res = confirm(sat + 'SAT (사유 : ' + msg + ') 가 맞습니까?');
+        if (sat && res) {
+            $.ajax({
+                url: '/user/editSatToken',
+                async: true,
+                type: 'POST',
+                data: {
+                    sat: parseFloat(sat),
+                    msg: msg,
+                    userId: userId,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    alert(data.msg);
+                    location.reload();
+                },
+
+                error: function (err) {
+                    alert('FAILURE : ', err.msg);
+                },
+            });
+        }
+    }
+</script>
+<h4 class="title">User</h4>
+<div class="content user-page">
+    <div class="top-bar">
+        <div class="total-user-txt">
+            Total User :
+            <p><%= users.length%></p>
+        </div>
+        <!-- <div class="submit-btn" id="battery-btn">Battery Replacement</div> -->
+    </div>
+    <br />
+    <table>
+        <colgroup>
+            <col style="width: 5%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+            <col style="width: 5%" />
+            <col style="width: 5%" />
+            <col style="width: 5%" />
+            <col style="width: 5%" />
+            <col style="width: 10%" />
+            <!-- <col style="width: 30%" /> -->
+            <col style="width: 15%" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Last login</th>
+                <th>Email</th>
+                <th>Signup date</th>
+                <th>$SAT</th>
+                <th>Exp</th>
+                <th>Energy</th>
+                <th>fcmToken</th>
+                <th>Whitelist</th>
+                <th>Phone number</th>
+                <!-- <th>Wallet(Tester)</th> -->
+                <th>Running Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(var d of users) { %>
+            <tr class="user">
+                <td class="center"><%= d.userId %></td>
+                <td class="center"><%= d.lastLogin %></td>
+                <td><%= d.email %></td>
+                <td class="center"><%= d.addedAt %></td>
+                <td><%= d.satToken %><button onclick="onClickSatAdd(<%= d.userId %>)">📝</button></td>
+                <td><%= d.exp %></td>
+                <td><%= d.energy %></td>
+                <td class="center">
+                    <a value="<%= d.fcmToken %>" onclick="copyElementText(this.id)" id="<%= d.userId%>">Copy</a>
+                </td>
+                <td class="center"><%= d.whitelist %></td>
+                <td><%= d.phoneNumber %></td>
+                <!-- <td><%= d.discordWalletAddress %></td> -->
+                <td class="center">
+                    <a href="/running/<%= d.userId%>">Workout</a>
+                </td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+<%-include('footer.ejs')%>

@@ -1,0 +1,45 @@
+.user-page {
+  color: white;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px 0;
+}
+.user-page .top-bar {
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.user-page .top-bar .total-user-txt {
+  width: auto;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+.user-page .top-bar .total-user-txt p {
+  font-weight: 600;
+}
+.user-page .top-bar .submit-btn {
+  padding: 6px 12px;
+  font-size: 16px;
+  border: 1px solid whitesmoke;
+  border-radius: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+.user-page .top-bar .submit-btn:hover {
+  transition: all 0.3s;
+  background-color: white;
+  color: black;
+}
+.user-page table {
+  width: 90%;
+}
+.user-page table td button {
+  position: absolute;
+  margin-left: 10px;
+}/*# sourceMappingURL=user.css.map */

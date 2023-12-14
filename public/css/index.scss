@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.title {
+    width: 100vw;
+    text-align: center;
+    padding-top: 20px;
+    color: #fff;
+}
+
+.login-page {
+    width: 100%;
+    height: 100%;
+    background-color: #082f5e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+
+    .main-wrap {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        .top-img {
+            // 임시
+            width: 100%;
+            img {
+                width: 100%;
+            }
+        }
+
+        .dday-txt {
+            font-family: 'Caveat', cursive;
+            font-weight: 400;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 10px 0;
+        }
+
+        .login-btns {
+            width: 60%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+
+            gap: 10px;
+            .login-btn {
+                width: 100%;
+                border-radius: 20px;
+                padding: 15px 0;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: row;
+                position: relative;
+
+                cursor: pointer;
+                img {
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    left: 30px;
+                }
+                &:hover {
+                    scale: 1.1;
+                }
+                &:active {
+                    scale: 1.06;
+                }
+                .login-sns-txt {
+                    text-align: center;
+                    font-weight: 600;
+                    font-size: 17px;
+                }
+                &.kakao {
+                    color: #371f1f;
+                    background-color: #f5e14a;
+                    mg {
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+                &.twitter {
+                    color: #fff;
+                    background-color: #50abf1;
+                    img {
+                        width: 28px;
+                        height: 28px;
+                    }
+                }
+                &.google {
+                    color: #7e7e7e;
+                    background-color: #fff;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+}
+@media (min-width: 768px) {
+}
