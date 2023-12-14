@@ -1,13 +1,30 @@
 <html>
     <head>
         <title><%= title %></title>
-        <link rel="stylesheet" type="text/css" href="/css/index.css?v=1" />
-        <link rel="stylesheet" type="text/css" href="/css/user.css" />
-        <link rel="stylesheet" type="text/css" href="/css/signup.css" />
-        <link rel="stylesheet" type="text/css" href="/css/message.css" />
-        <link rel="stylesheet" type="text/css" href="/css/mailbox.css" />
-        <link href='https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
-        <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/js/froala_editor.pkgd.min.js'></script>
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-NTN58CWR');</script>
+        <!-- End Google Tag Manager -->
+
+        <meta property="og:type" content="x-mas-letter-qwer">
+        <meta property="og:url" content="https://xmasletter.kr">
+        <meta property="og:title" content="크리스마스 편지 보내기">
+        <meta property="og:image" content="https://xmasletter.kr/img/thumb.png">
+        <meta property="og:description" content="친구들에게 편지를 보내면 크리스마스에 편지가 전달됩니다!">
+        <meta property="og:site_name" content="크리스마스 우체통">
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/css/index.css?v=36" />
+        <link rel="stylesheet" type="text/css" href="/css/user.css?v=36" />
+        <link rel="stylesheet" type="text/css" href="/css/signup.css?v=36" />
+        <link rel="stylesheet" type="text/css" href="/css/message.css?v=36" />
+        <link rel="stylesheet" type="text/css" href="/css/mailbox.css?v=36" />
+        <link rel="stylesheet" type="text/css" href="/css/reader.css?v=36" />
+        <link href="https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/js/froala_editor.pkgd.min.js"></script>
         <script
             src="https://code.jquery.com/jquery-3.7.1.min.js"
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
@@ -17,8 +34,8 @@
             src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js"
             integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4"
             crossorigin="anonymous"
-            async
         ></script>
+        <script src="/clipboard.js"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -29,8 +46,11 @@
             href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Lato:wght@100;300;400;700;900&family=Noto+Sans:wght@100;300;400;500;600;700;800&family=Roboto:wght@100;300;400;500;700;900&display=swap"
             rel="stylesheet"
         />
+        <script src="/etag.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
         <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
         <script type="text/javascript">
+            Kakao.init('3919cec6be84fb4ade423d6cf6573323');
             function copyElementText(id) {
                 var text = document.getElementById(id).value;
                 var elem = document.createElement('textarea');
@@ -71,7 +91,108 @@
             function eraseCookie(name) {
                 document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
             }
+
+            function str_pad_left(string, pad, length) {
+                return (new Array(length + 1).join(pad) + string).slice(-length);
+            }
+
+            function fancyTimeFormat(time) {
+                const minutes = Math.floor(time / 60);
+                const seconds = time - minutes * 60;
+
+                const finalTime = str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
+                return finalTime;
+            }
+
+            function updateVh(){
+                let vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                setTimeout(updateVh, 1000 * 2);
+            }
+            updateVh();
+
+            $(document).ready(function(){
+                function cc() {
+                    setTimeout(function(){
+                        $(window).scrollTop(10);
+                    },1000)
+                }
+                $('input, textarea').bind('focus',cc);
+            });
+
         </script>
     </head>
-    <body>
+    <body onclick="play()">
+        <script>
+            let bgAudio = new Audio('/qwer_discord.mp3');
+            bgAudio.loop = true;
+            let first = null;
+            function play(){
+                let _ = localStorage.getItem("play")
+                console.log(first, bgAudio.paused, _)
+                if( _  == "0") return ;
+
+                if(first == null && bgAudio.paused) {
+                    bgAudio.play();
+                    if(bgAudio.paused == false){
+                        first = true;
+                    }
+                }
+            }
+            play();
+
+            function toggleAudio(){
+                if(bgAudio.paused){
+                    bgAudio.play();
+                    localStorage.setItem("play", "1")
+                    etag_sound_click("on")
+                }else{
+                    bgAudio.pause();
+                    localStorage.setItem("play", "0")
+                    etag_sound_click("off")
+                }
+            }
+
+            setInterval(function(){
+                if(bgAudio.paused){
+                    $(".audio-player").removeClass("playing")
+                }else{
+                    $(".audio-player").addClass("playing")
+                    $(".audio-player").addClass("folding")
+                }
+            },200)
+        </script>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NTN58CWR" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q85QLYKZ4J"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Q85QLYKZ4J');
+        </script>
+        <script>etag_pageview()</script>
+
+        <div class="audio-player" onclick="toggleAudio()">
+            <div class="container">
+                <i class="fa-solid fa-play"></i>
+                <i class="fa-solid fa-pause"></i>
+                <div>DISCORD (QWER)</div>
+                <img src="/img/discord_thumb.png"/>
+            </div>
+        </div>
+
+        <div class="snow-container">
+            <% for(let i=0;i<40;i++){ %>
+            <div class="snow"></div>
+            <% } %>
+        </div>
+
+        <div class="galaxy">
+            <div class="stars1"></div>
+            <div class="stars2"></div>
+            <div class="stars3"></div>
+        </div>
         <div class="main">

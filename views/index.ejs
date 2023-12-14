@@ -1,113 +1,122 @@
 <%-include('header.ejs')%>
 <script>
-    const module = {};
-    var tryLogin = false;
-    window.onload = function () {
-        Kakao.init('<%= kakaoJSKey %>');
-        const target = $('.dday-txt')[0];
-        const christmas = new Date('2023-12-25');
-        const diff = Date.now() - christmas;
-        const diffDay = Math.floor(diff / (1000 * 60 * 60 * 24));
-        if (diffDay == 0) {
-            target.innerHTML += '-Day';
-        } else if (diffDay > 1) {
-            target.innerHTML += ' + ' + diffDay;
-        } else if (diffDay < 1) {
-            target.innerHTML += ' - ' + Math.abs(diffDay);
-        }
+$(".galaxy").remove();
 
-        updateToken();
-    };
-
-    function onClickLogin(platform) {
-        if (tryLogin) return;
-        tryLogin = true;
-        switch (platform) {
-            case 'kakao':
-                loginWithKakao();
-                break;
-            case 'twitter':
-                module.loginWithTwitter(onLogin);
-                break;
-            case 'google':
-                module.loginWithGoogle(onLogin);
-            default:
-                break;
-        }
+const module = {};
+var tryLogin = false;
+window.onload = function () {
+    const target = $('.dday-txt')[0];
+    const christmas = new Date('2023-12-25');
+    const diff = Date.now() - christmas;
+    const diffDay = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (diffDay == 0) {
+        target.innerHTML += '-Day';
+    } else if (diffDay > 1) {
+        target.innerHTML += ' + ' + diffDay;
+    } else if (diffDay < 1) {
+        target.innerHTML += ' - ' + Math.abs(diffDay);
     }
 
-    function onLogin(uid, nickname, email) {
-        tryLogin = false;
-        if (uid == null) {
-            alert('다시 시도해주세요.');
-        } else {
-            $.ajax({
-                url: '/user/login',
-                async: true,
-                type: 'POST',
-                data: {
-                    nickname: nickname,
-                    uid: uid,
-                    email: email,
-                },
-                dataType: 'json',
-                success: function (data) {
-                    if (data.isNew) {
-                        location.href = '/user/signup?uid=' + uid + '&nickname=' + nickname + '&email=' + email;
-                    } else if (data.userId) {
-                        setCookie('userId', data.userId, 30);
-                        location.href = '/mailbox';
-                    }
-                },
+    updateToken();
+};
 
-                error: function (err) {
-                    alert('FAILURE : ', err.msg);
-                },
-            });
-        }
+function onClickLogin(platform) {
+    if (tryLogin) return;
+    tryLogin = true;
+    switch (platform) {
+        case 'kakao':
+            etag_login_click("kakao");
+            loginWithKakao();
+            break;
+        case 'twitter':
+            etag_login_click("twitter");
+            module.loginWithTwitter(onLogin);
+            break;
+        case 'google':
+            if( window.navigator.userAgent.indexOf("KAKAOTALK") >= 0 )
+                return alert("카카오톡 웹뷰에서는 구글로그인을 지원하지 않습니다. 모바일 브라우저에서 다시 시도해주세요.")
+            etag_login_click("google");
+            module.loginWithGoogle(onLogin);
+        default:
+            break;
     }
+}
 
-    function loginWithKakao(callback) {
-        Kakao.Auth.authorize({
-            redirectUri: 'http://localhost:3033', // return
-        });
-    }
+function onLogin(uid, nickname, email, sns) {
+    tryLogin = false;
+    setCookie('userId', "");
 
-    function updateToken() {
-        var code = new URL(location.href).searchParams.get('code');
-
+    if (uid == null) {
+        alert('다시 시도해주세요.');
+    } else {
         $.ajax({
+            url: '/user/login',
+            async: true,
             type: 'POST',
-            url: 'https://kauth.kakao.com/oauth/token',
-            header: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: {
+                nickname: nickname,
+                uid: uid,
+                email: email,
             },
-            data: { grant_type: 'authorization_code', client_id: '<%= kakaoAPIKey%>', redirect_uri: 'http://localhost:3033', code: code },
-            success: function (res) {
-                console.log(res);
-                let token = res.access_token;
-                console.log(token);
-                Kakao.Auth.setAccessToken(token);
-                Kakao.Auth.getStatusInfo()
-                    .then(function (res) {
-                        console.log(res, res.id);
-                        if (res && res.user && res.user.id) {
-                            const t = res.user;
-                            onLogin(t.id, t.kakao_account.profile.nickname, t.kakao_account.email);
-                        }
-                    })
-                    .catch(function (err) {
-                        Kakao.Auth.setAccessToken(null);
-                    });
+            dataType: 'json',
+            success: function (data) {
+                if (data.isNew) {
+                    location.href = '/user/signup?uid=' + uid + '&nickname=' + nickname + '&email=' + email + "&sns="+sns;
+                } else if (data.userId) {
+                    setCookie('userId', data.userId, 30);
+                    etag_login();
+                    location.href = '/mailbox';
+                }
             },
-            error: function (jq, tt, ee) {
-                console.log(jq, tt, ee);
+
+            error: function (err) {
+                alert('FAILURE : ', err.msg);
             },
         });
     }
+}
+
+function loginWithKakao(callback) {
+    Kakao.Auth.authorize({
+        redirectUri: 'https://xmasletter.kr', // return
+    });
+}
+
+function updateToken() {
+    var code = new URL(location.href).searchParams.get('code');
+
+    $.ajax({
+        type: 'POST',
+        url: 'https://kauth.kakao.com/oauth/token',
+        header: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+        data: { grant_type: 'authorization_code', client_id: '<%= kakaoAPIKey%>', redirect_uri: 'https://xmasletter.kr', code: code },
+        success: function (res) {
+            console.log(res);
+            let token = res.access_token;
+            console.log(token);
+            Kakao.Auth.setAccessToken(token);
+            Kakao.Auth.getStatusInfo()
+                .then(function (res) {
+                    console.log(res, res.id);
+                    if (res && res.user && res.user.id) {
+                        const t = res.user;
+                        onLogin(t.id, t.kakao_account.profile.nickname, t.kakao_account.email, "kakao");
+                    }
+                })
+                .catch(function (err) {
+                    Kakao.Auth.setAccessToken(null);
+                });
+        },
+        error: function (jq, tt, ee) {
+            console.log(jq, tt, ee);
+        },
+    });
+}
 </script>
 <%-include('firebaseauth.ejs')%>
-
+<style>body{background-color: #082f5e;}</style>
 <div class="login-page">
     <div class="main-wrap">
         <div class="top-img"><img src="/img/img_login_top.png" /></div>
@@ -123,7 +132,7 @@
             </div>
             <div class="login-btn google" onclick="onClickLogin('google')">
                 <img src="/img/ic_google.png" />
-                <div class="login-sns-txt">구글 계속하기</div>
+                <div class="login-sns-txt">구글로 계속하기</div>
             </div>
         </div>
     </div>

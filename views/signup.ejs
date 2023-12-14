@@ -1,4 +1,5 @@
 <%-include('header.ejs')%>
+<style>body{background-color: #50abf1;}</style>
 <div class="signup-page">
     <div class="signup-con">
         <div class="title">어떤 이름으로<br />우체통을 만들겠어요?</div>
@@ -33,6 +34,7 @@
 <script>
     const url = new URL(window.location.href);
     const uid = url.searchParams.get('uid');
+    const sns = url.searchParams.get('sns');
     var nickname = url.searchParams.get('nickname');
     var email = url.searchParams.get('email');
     var userId = getCookie('userId');
@@ -117,6 +119,15 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.userId) {
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+
+                        // This arrangement can be altered based on how we want the date's format to appear.
+                        let currentDate = `${year}-${month}-${day}`;
+
+                        etag_signup(currentDate,sns)
+                        etag_login();
                         setCookie('userId', data.userId, 30);
                         location.href = '/mailbox';
                     } else {
@@ -130,5 +141,8 @@
             });
         }
     }
+
+    etag_welcome_pageview();
+    etag_signup_start();
 </script>
 <%-include('footer.ejs')%>

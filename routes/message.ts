@@ -20,12 +20,16 @@ router.post('/save_voice', upload.single('file'), async (req, res) => {
     console.log(req.body, req.file);
     const { nickname, visit } = req.body;
     try {
-        const userId = parseInt(decrypt(visit));
-        let result = await db.query(`INSERT INTO TB_USER_MAILBOX (userId, content, type, addedAt, \`from\`) VALUES (?, ?, 1, NOW(), ?)`, [userId, req.file.path, nickname]);
-        if (result.insertId > 0) {
-            return res.json({ status: 1, msg: 'Success' });
-        } else {
-            throw 'Cannot insert TB_USER_MAILBOX';
+        const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
+        if(_user){
+            let result = await db.query(`INSERT INTO TB_USER_MAILBOX (userId, content, type, addedAt, \`from\`) VALUES (?, ?, 1, NOW(), ?)`, [_user.userId, req.file.path, nickname]);
+            if (result.insertId > 0) {
+                return res.json({ status: 1, msg: 'Success' });
+            } else {
+                throw 'Cannot insert TB_USER_MAILBOX';
+            }
+        }else{
+            return res.json({ status: -1, msg: 'Failed' });
         }
     } catch (err) {
         console.log('error : ', err);
@@ -36,18 +40,23 @@ router.post('/save_voice', upload.single('file'), async (req, res) => {
 router.post('/save_text', async (req, res) => {
     const { nickname, content, visit } = req.body;
     try {
-        const userId = parseInt(decrypt(visit));
-        if (userId && !isNaN(userId)) {
-            let result = await db.query(`INSERT INTO TB_USER_MAILBOX (userId, content, type, addedAt, \`from\`) VALUES (?, ?, 1, NOW(), ?)`, [
-                userId,
-                content,
-                nickname,
-            ]);
-            if (result.insertId > 0) {
-                return res.json({ status: 1, msg: 'Success' });
-            } else {
-                throw 'Cannot insert TB_USER_MAILBOX';
+        const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
+        if(_user){
+            const userId = _user.userId;
+            if (userId && !isNaN(userId)) {
+                let result = await db.query(`INSERT INTO TB_USER_MAILBOX (userId, content, type, addedAt, \`from\`) VALUES (?, ?, 1, NOW(), ?)`, [
+                    userId,
+                    content,
+                    nickname,
+                ]);
+                if (result.insertId > 0) {
+                    return res.json({ status: 1, msg: 'Success' });
+                } else {
+                    throw 'Cannot insert TB_USER_MAILBOX';
+                }
             }
+        }else {
+            return res.json({ status: -1, msg: 'Failed' });
         }
     } catch (err) {
         console.log('error : ', err);

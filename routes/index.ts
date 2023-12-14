@@ -5,6 +5,7 @@ import config from '../config';
 import user from './user';
 import message from './message';
 import mailbox from './mailbox';
+import reader from './reader';
 //
 const router = express.Router();
 const read_db = MySQL.read();
@@ -18,12 +19,13 @@ router.get('/', async (req, res) => {
     res.render('index', {
         title: '크리스마스 우체통',
         ...config.firebaseConfig,
-        kakaoJSKey : config.kakaoConfig.jsKey,
-        kakaoAPIKey : config.kakaoConfig.apiKey
+        kakaoJSKey: config.kakaoConfig.jsKey,
+        kakaoAPIKey: config.kakaoConfig.apiKey,
     });
 });
 
 router.use('/user', user);
 router.use('/message', message);
 router.use('/mailbox', mailbox);
+router.use('/reader', reader);
 export default router;

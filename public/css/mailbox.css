@@ -1,17 +1,30 @@
 .mailbox-page {
   width: 100%;
-  height: 100%;
+  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  height: calc(var(--vh, 1vh) * 100);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   background: url("/img/img_main_background.png");
-  background-position: center top;
-  background-repeat: repeat;
-  background-color: #50abf1;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-color: #0D5394;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+  overflow: hidden;
+}
+.mailbox-page .street_lamp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background-image: url("/img/Main_Street Lamp_PC.png");
+  background-position: center bottom;
+  background-size: cover;
+  z-index: 0;
 }
 .mailbox-page .bottom_ground {
   position: absolute;
@@ -21,28 +34,24 @@
   right: 0;
   background: url("/img/img_ground.png");
   background-position: center bottom;
-  background-repeat: no-repeat;
-  z-index: 0;
+  background-repeat: repeat-x;
+  z-index: 1;
 }
 .mailbox-page .mailbox-con {
+  flex: 1;
   position: relative;
   padding: 20px 10px;
-  min-width: 480px;
-  max-width: 600px;
-  height: 80vh;
+  width: 480px;
+  max-width: 95%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-image: url("/img/img_street_lamp.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
   z-index: 1;
 }
 .mailbox-page .mailbox-con .top-div {
-  width: 50%;
-  top: 10%;
+  width: 100%;
+  top: 0;
   left: 0;
   position: absolute;
   z-index: 1;
@@ -57,6 +66,7 @@
   font-size: 24px;
   font-weight: 500;
   color: #fff;
+  margin-bottom: 5px;
 }
 .mailbox-page .mailbox-con .top-div .sub-title {
   width: 100%;
@@ -71,17 +81,18 @@
   justify-content: flex-end;
   align-items: center;
   flex-direction: column;
+  padding-top: 100px;
+  flex: 1;
 }
 .mailbox-page .mailbox-con .mailbox img {
   width: auto;
   height: 100%;
-  max-height: 400px;
+  max-height: 300px;
 }
 .mailbox-page .mailbox-con .btm-btns {
   display: none;
   flex-direction: column;
   gap: 8px;
-  position: absolute;
   width: 80%;
   bottom: 0px;
 }
@@ -118,12 +129,14 @@
   justify-content: center;
   align-items: flex-end;
   display: none;
-}
-.mailbox-btm-popup.open {
-  display: flex;
+  transition: all 0.5s;
 }
 .mailbox-btm-popup .btm-con {
-  height: 30vh;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  transform: translateY(500px);
+  transition: all 0.3s;
+  height: 36vh;
   width: 100%;
   background-color: #000;
   display: flex;
@@ -135,7 +148,8 @@
   font-size: 20px;
   font-weight: 500;
   color: #fff;
-  width: 60%;
+  width: 400px;
+  max-width: 95%;
   white-space: break-spaces;
   word-break: keep-all;
   flex: 2;
@@ -151,25 +165,60 @@
   justify-content: center;
   align-items: flex-start;
   flex: 1;
-  width: 60%;
+  width: 400px;
+  max-width: 95%;
   gap: 20px;
 }
 .mailbox-btm-popup .btm-con .btns .btn {
   padding: 10px 20px;
   border-radius: 20px;
   background-color: #f12139;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 400;
   color: #fff;
   flex: 1;
   text-align: center;
   white-space: break-spaces;
   word-break: keep-all;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+}
+.mailbox-btm-popup .btm-con .btns .btn img {
+  height: 20px;
 }
 .mailbox-btm-popup .btm-con .btns .btn:hover {
   scale: 1.03;
 }
 .mailbox-btm-popup .btm-con .btns .btn:active {
   scale: 1.015;
+}
+.mailbox-btm-popup .btm-con.open {
+  transform: translateY(0px);
+}
+.mailbox-btm-popup.open {
+  display: flex;
+}
+
+#popup-share .contents {
+  display: flex;
+  flex-direction: column;
+}
+#popup-share .contents .buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+#popup-share .contents .buttons img {
+  cursor: pointer;
+  width: 40px;
+}
+#popup-share .contents .buttons img:hover {
+  transform: scale(1.1);
+}
+
+#input-box {
+  width: 350px;
+  max-width: 100%;
 }/*# sourceMappingURL=mailbox.css.map */

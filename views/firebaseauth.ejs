@@ -1,12 +1,9 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js';
-
-    // If you enabled Analytics in your project, add the Firebase SDK for Google Analytics
     import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js';
-
-    // Add Firebase products that you want to use
     import { getAuth, TwitterAuthProvider, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js';
     import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js';
+
     const firebaseConfig = {
         apiKey: '<%= apiKey %>',
         authDomain: '<%= authDomain %>',
@@ -15,6 +12,7 @@
         messagingSenderId: '<%= messagingSenderId %>',
         appId: '<%= appId %>',
     };
+
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const provider = new TwitterAuthProvider();
@@ -31,7 +29,7 @@
                 console.log(user);
                 if (user && user.providerData && user.providerData[0]) {
                     const t = user.providerData[0];
-                    callback(t.uid, t.displayName, t.email);
+                    callback(t.uid, t.displayName, t.email, "twitter");
                 } else {
                     callback(null, null);
                 }
@@ -48,6 +46,7 @@
                 callback(null, null);
             });
     }
+    
     module.loginWithTwitter = loginWithTwitter;
     function loginWithGoogle(callback) {
         const auth = getAuth();
@@ -59,7 +58,7 @@
                 console.log('User : ', user);
                 if (user && user.providerData && user.providerData[0]) {
                     const t = user.providerData[0];
-                    callback(t.uid, t.displayName, t.email);
+                    callback(t.uid, t.displayName, t.email, "google");
                 } else {
                     callback(null, null);
                 }
