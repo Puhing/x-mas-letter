@@ -6,37 +6,25 @@
   align-items: center;
   flex-direction: column;
   background: url("/img/img_main_background.png");
-<<<<<<< HEAD
   background-position: center bottom;
   background-size: cover;
-=======
-  background-position: center top;
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   background-repeat: repeat;
   background-color: #50abf1;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
 }
-<<<<<<< HEAD
-/* .mailbox-page .bottom_ground {
-=======
 .mailbox-page .bottom_ground {
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   position: absolute;
   bottom: 0;
   top: 0;
   left: 0;
   right: 0;
-  background: url("/img/img_ground.png");
+  /* background: url("/img/img_ground.png"); */
   background-position: center bottom;
   background-repeat: no-repeat;
   z-index: 0;
-<<<<<<< HEAD
-} */
-=======
 }
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
 .mailbox-page .mailbox-con {
   position: relative;
   padding: 20px 10px;
@@ -47,11 +35,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-<<<<<<< HEAD
   /* background-image: url("/img/img_street_lamp.png"); */
-=======
-  background-image: url("/img/img_street_lamp.png");
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -60,11 +44,7 @@
 .mailbox-page .mailbox-con .top-div {
   width: 50%;
   top: 10%;
-<<<<<<< HEAD
   left: 10%;
-=======
-  left: 0;
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   position: absolute;
   z-index: 1;
   display: flex;
@@ -95,14 +75,9 @@
 }
 .mailbox-page .mailbox-con .mailbox img {
   width: auto;
-<<<<<<< HEAD
   height: 80%;
   max-height: 400px;
   margin-bottom: 20%;
-=======
-  height: 100%;
-  max-height: 400px;
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
 }
 .mailbox-page .mailbox-con .btm-btns {
   display: none;
@@ -124,11 +99,7 @@
   font-weight: 400;
   color: #fff;
   border-radius: 12px;
-<<<<<<< HEAD
   background-color: #FF5E0E;
-=======
-  background-color: #f12139;
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   cursor: pointer;
 }
 .mailbox-page .mailbox-con .btm-btns .btm-btn:hover {
@@ -188,11 +159,7 @@
 .mailbox-btm-popup .btm-con .btns .btn {
   padding: 10px 20px;
   border-radius: 20px;
-<<<<<<< HEAD
   background-color: #FF5E0E;
-=======
-  background-color: #f12139;
->>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   font-size: 20px;
   font-weight: 400;
   color: #fff;
