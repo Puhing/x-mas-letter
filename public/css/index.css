@@ -24,9 +24,13 @@ body {
 .login-page {
   width: 100%;
   height: 100%;
+<<<<<<< HEAD
   background-image: url('/img/background.png');
   background-size: cover;
   background-position: center;
+=======
+  background-color: #082f5e;
+>>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   display: flex;
   justify-content: center;
   align-items: center;
@@ -42,10 +46,15 @@ body {
   align-items: center;
   flex-direction: column;
 }
+<<<<<<< HEAD
 
 .login-page .main-wrap .top-img {
   width: 40%;
   margin-top: 200px;
+=======
+.login-page .main-wrap .top-img {
+  width: 100%;
+>>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
 }
 .login-page .main-wrap .top-img img {
   width: 100%;
@@ -54,7 +63,11 @@ body {
   font-family: "Caveat", cursive;
   font-weight: 400;
   font-size: 24px;
+<<<<<<< HEAD
   color: #839489;
+=======
+  color: rgba(255, 255, 255, 0.6);
+>>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
   margin: 10px 0;
 }
 .login-page .main-wrap .login-btns {
@@ -112,5 +125,9 @@ body {
 }
 .login-page .main-wrap .login-btns .login-btn.google {
   color: #7e7e7e;
+<<<<<<< HEAD
   background-color: #fffff;
+=======
+  background-color: #fff;
+>>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
 }/*# sourceMappingURL=index.css.map */

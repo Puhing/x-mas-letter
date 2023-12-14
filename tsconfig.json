@@ -3,9 +3,15 @@
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         // ... rest
+<<<<<<< HEAD
         "baseUrl": "./",
         "paths": {
             "@config/*": ["path/to/config/*"]
     }
 }
 }
+=======
+        "baseUrl": "./"
+    }
+}
+>>>>>>> d8478af99271f2e2cebcc927c9c75636849d6b38
