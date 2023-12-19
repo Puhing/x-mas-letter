@@ -1,6 +1,9 @@
 <html>
     <head>
         <title><%= title %></title>
+
+        <meta property="og:image" content="https://xmasletter.kr/img/thumb.png">
+
         <link rel="stylesheet" type="text/css" href="/css/index.css?v=1" />
         <link rel="stylesheet" type="text/css" href="/css/user.css" />
         <link rel="stylesheet" type="text/css" href="/css/signup.css" />
@@ -73,5 +76,77 @@
             }
         </script>
     </head>
-    <body>
+    <body onclick="play()">
+        <script>
+            let bgAudio = new Audio('/qwer_discord.mp3');
+            bgAudio.loop = true;
+            let first = null;
+            function play(){
+                let _ = localStorage.getItem("play")
+                console.log(first, bgAudio.paused, _)
+                if( _  == "0") return ;
+
+                if(first == null && bgAudio.paused) {
+                    bgAudio.play();
+                    if(bgAudio.paused == false){
+                        first = true;
+                    }
+                }
+            }
+            play();
+
+            function toggleAudio(){
+                if(bgAudio.paused){
+                    bgAudio.play();
+                    localStorage.setItem("play", "1")
+                    etag_sound_click("on")
+                }else{
+                    bgAudio.pause();
+                    localStorage.setItem("play", "0")
+                    etag_sound_click("off")
+                }
+            }
+
+            setInterval(function(){
+                if(bgAudio.paused){
+                    $(".audio-player").removeClass("playing")
+                }else{
+                    $(".audio-player").addClass("playing")
+                    $(".audio-player").addClass("folding")
+                }
+            },200)
+        </script>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NTN58CWR" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q85QLYKZ4J"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Q85QLYKZ4J');
+        </script>
+        <script>etag_pageview()</script>
+
+        <div class="audio-player" onclick="toggleAudio()">
+            <div class="container">
+                <i class="fa-solid fa-play"></i>
+                <i class="fa-solid fa-pause"></i>
+                <div>DISCORD (QWER)</div>
+                <img src="/img/discord_thumb.png"/>
+            </div>
+        </div>
+
+        <div class="snow-container">
+            <% for(let i=0;i<40;i++){ %>
+            <div class="snow"></div>
+            <% } %>
+        </div>
+
+        <div class="galaxy">
+            <div class="stars1"></div>
+            <div class="stars2"></div>
+            <div class="stars3"></div>
+        </div>
         <div class="main">

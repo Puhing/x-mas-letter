@@ -113,4 +113,92 @@ body {
 .login-page .main-wrap .login-btns .login-btn.google {
   color: #7e7e7e;
   background-color: #fff;
+}
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.audio-player {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  left: 15px;
+  display: flex;
+  justify-content: center;
+  z-index: 9999;
+}
+.audio-player > .container {
+  background-color: #ff5e0e;
+  position: relative;
+  color: white;
+  border-radius: 20px;
+  padding: 10px 15px;
+  border: 2px solid white;
+  width: 300px;
+  cursor: pointer;
+  transition: all 0.5s;
+  display: flex;
+  overflow: hidden;
+}
+.audio-player > .container > div {
+  transition: all 0.5s;
+  flex: 1;
+  text-align: center;
+}
+.audio-player > .container > i {
+  transition: all 0.5s;
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.audio-player > .container .fa-play {
+  display: flex;
+}
+.audio-player > .container .fa-pause {
+  display: none;
+}
+.audio-player > .container > img {
+  width: 30px;
+  border-radius: 50%;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  animation: _ 2s linear infinite;
+}
+.audio-player > .container:hover {
+  scale: 1.02;
+}
+.audio-player.playing > .container .fa-play {
+  display: none;
+}
+.audio-player.playing > .container .fa-pause {
+  display: flex;
+}
+.audio-player.playing > .container > img {
+  animation-name: rotating;
+}
+.audio-player.folding {
+  left: unset;
+}
+.audio-player.folding > .container {
+  width: 43px;
+  height: 43px;
+}
+.audio-player.folding > .container > i {
+  opacity: 0;
+}
+.audio-player.folding > .container > div {
+  opacity: 0;
+  width: 0px;
+  height: 0;
+  position: absolute;
+  overflow: hidden;
 }/*# sourceMappingURL=index.css.map */

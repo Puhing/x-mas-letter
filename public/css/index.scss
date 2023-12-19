@@ -121,3 +121,111 @@ body {
 }
 @media (min-width: 768px) {
 }
+
+@keyframes rotating {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+.audio-player{
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    left: 15px;
+    display: flex;
+    justify-content: center;
+
+    z-index: 9999;
+
+    >.container{
+        background-color: #082f5e;
+        position: relative;
+        color: white;
+        border-radius: 20px;
+        padding: 10px 15px;
+        border: 2px solid white;
+        width: 300px;
+        cursor: pointer;
+        transition: all 0.5s;
+        display: flex;
+        overflow: hidden;
+
+        >div{
+            transition: all 0.5s;
+            flex:1;
+            text-align: center;
+        }
+
+        >i{
+            transition: all 0.5s;
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .fa-play{
+            display: flex;
+        }
+        .fa-pause{
+            display: none;
+        }
+
+        >img{
+            width: 30px;
+            border-radius: 50%;
+            position: absolute;
+            right: 4px;
+            top: 4px;
+
+            animation: _ 2s linear infinite;
+        }
+
+        &:hover{
+            scale: 1.02;
+        }
+    }
+
+    &.playing{
+        >.container{
+            .fa-play{
+                display: none;
+            }
+            .fa-pause{
+                display: flex;
+            }
+            >img{
+                animation-name: rotating;
+            }
+        }
+    }
+
+    &.folding{
+        left: unset;
+
+        >.container{
+            width: 43px;
+            height: 43px;
+            // border-radius: 50%;
+            >i{
+                opacity: 0;
+            }
+            >div{
+                opacity: 0;
+                width: 0px;
+                height: 0;
+                position: absolute;
+                overflow: hidden;
+            }
+            >img{
+                // position: relative;
+            }
+        }
+    }
+}
