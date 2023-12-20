@@ -34,11 +34,28 @@
             </div>
         </div>
     </div>
+    <div class="mailbox-btm-popup" id="popup-qwer3">
+        <div class="btm-con">
+            <div class="text">내 우체통을 공유해보세요!</div>
+            <div class="btm-con2">
+                <div class="btn-set" id="mylink"><img src="/img/sns/link.png" alt="Button Image" /></div>
+                <div class="btn-set" onclick="shareTwitter()"><img src="/img/sns/x.png" alt="Button Image" /></div>
+                <div class="btn-set" onclick="shareFacebook()"><img src="/img/sns/fb.png" alt="Button Image" /></div>
+                <div class="btn-set" onclick="shareKakao()"><img src="/img/sns/kakao.png" alt="Button Image" /></div>
+                <div class="btn-set" onclick="shareBand()"><img src="/img/sns/band.png" alt="Button Image" /></div>
+            </div>
+            <div class="btn-set">
+                <div class="button" onclick="onClickClosePopup()">닫기</div>
+            </div> 
+        </div>
+    </div>
 </div>
 <script>
     var userId = getCookie('userId');
     const url = new URL(location.href);
     var nickname, email, visit;
+    var myVisit = '';
+    var letter_count = 0;
     window.onload = function () {
         visit = url.searchParams.get('visit');
         if (visit) {
@@ -73,9 +90,23 @@
                     if (data.status == 1) {
                         nickname = data.user.nickname;
                         email = data.user.email;
+                        myVisit = data.user.uuid;
+
+                        const link = `http://localhost:3033/mailbox?visit=${myVisit}&utm_source=copy&utm_medium=social&utm_campaign=x-mas`;
+                        $('#mylink').attr('data-clipboard-text', link);
                         $('.title')[0].innerHTML = nickname + '님의 우체통';
                         $('#mailcount')[0].innerHTML = data.mail + '개의 편지가 도착했어요!';
                         $('#my-mailbox').addClass('open');
+                        letter_count = data.mail;
+
+                        var clipboard = new ClipboardJS('#mylink');
+                        clipboard.on('success', function () {
+                            etag_mailbox_share('link');
+                            alert('📮 우체통 주소가 복사되었습니다!');
+                        });
+                        clipboard.on('error', function () {
+                            alert('Fail');
+                        });
                     } else {
                         alert(data.msg);
                         window.location.href = '/';
@@ -91,7 +122,7 @@
     };
     function onClickMailboxBtmBtn(idx) {
         if (idx == 1) {
-            // 우체통 공유하기
+            $('#popup-qwer3').addClass('open');
         } else if (idx == 2) {
             // 편지열기
         } else if (idx == 3) {
@@ -102,6 +133,7 @@
             location.href = '/';
         } else if (idx == 5) {
             // 편지 남기기
+            etag_mailbox_send(letter_count);
             location.href = '/message?visit=' + visit;
         }
     }
@@ -116,6 +148,59 @@
     }
     function onClickClosePopup() {
         $('.mailbox-btm-popup').removeClass('open');
+    }
+    function shareFacebook() {
+        etag_mailbox_share('facebook');
+
+        var fburl = `https://xmasletter.kr/mailbox?visit=${myVisit}&utm_source=fb&utm_medium=social&utm_campaign=x-mas`;
+        var fbtitle = '📮크리스마스 편지📮';
+        var fbsummary = '나의 크리스마스 우체통에 편지를 남겨주세요! 보내주신 편지는 크리스마스에 확인할 수 있어요. 🎅 ';
+        var sharerURL =
+            'http://www.facebook.com/sharer/sharer.php?s=100&p[url]=' +
+            encodeURI(fburl) +
+            '&p[title]=' +
+            encodeURI(fbtitle) +
+            '&p[summary]=' +
+            encodeURI(fbsummary);
+        window.open(sharerURL, 'facebook-share-dialog', 'width=626,height=436');
+    }
+
+    function shareKakao() {
+        etag_mailbox_share('kakao');
+
+        const text = `나의 크리스마스 우체통에 편지를 남겨주세요! 보내주신 편지는 크리스마스에 확인할 수 있어요. 🎅 `;
+        const link = `https://xmasletter.kr/mailbox?visit=${myVisit}&utm_source=kakao&utm_medium=social&utm_campaign=x-mas`;
+        Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+                title: '📮크리스마스 편지📮',
+                description: text,
+                imageUrl: 'https://xmasletter.kr/img/thumb.png',
+                link: {
+                    mobileWebUrl: link,
+                    webUrl: link,
+                },
+            },
+        });
+    }
+
+    function shareBand() {
+        etag_mailbox_share('band');
+
+        const text = `📮크리스마스 편지📮\n나의 크리스마스 우체통에 편지를 남겨주세요! 보내주신 편지는 크리스마스에 확인할 수 있어요. 🎅 `;
+        const link = `https://xmasletter.kr/mailbox?visit=${myVisit}&utm_source=band&utm_medium=social&utm_campaign=x-mas`;
+        window.open(
+            `https://band.us/plugin/share?body=${encodeURIComponent(text)}&route=${encodeURIComponent(link)}`,
+            'band-share-dialog',
+            'width=626,height=436'
+        );
+    }
+
+    function shareTwitter() {
+        etag_mailbox_share('twitter');
+        const text = `📮크리스마스 편지📮\n나의 크리스마스 우체통에 편지를 남겨주세요! 보내주신 편지는 크리스마스에 확인할 수 있어요. 🎅 https://xmasletter.kr/mailbox?visit=${myVisit}&utm_source=twitter&utm_medium=social&utm_campaign=x-mas`;
+
+        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), 'twitter-share-dialog', 'width=626,height=436');
     }
 </script>
 <%-include('footer.ejs')%>

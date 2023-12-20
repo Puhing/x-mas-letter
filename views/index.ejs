@@ -1,9 +1,10 @@
 <%-include('header.ejs')%>
 <script>
+    $(".galaxy").remove();
+
     const module = {};
     var tryLogin = false;
     window.onload = function () {
-        Kakao.init('<%= kakaoJSKey %>');
         const target = $('.dday-txt')[0];
         const christmas = new Date('2023-12-25');
         const diff = Date.now() - christmas;
@@ -24,12 +25,16 @@
         tryLogin = true;
         switch (platform) {
             case 'kakao':
+                etag_login_click("kakao");
                 loginWithKakao();
                 break;
             case 'twitter':
                 module.loginWithTwitter(onLogin);
                 break;
             case 'google':
+                if( window.navigator.userAgent.indexOf("KAKAOTALK") >= 0 )
+                    return alert("카카오톡 웹뷰에서는 구글로그인을 지원하지 않습니다. 모바일 브라우저에서 다시 시도해주세요.")
+                etag_login_click("google");
                 module.loginWithGoogle(onLogin);
             default:
                 break;
@@ -93,7 +98,7 @@
                         console.log(res, res.id);
                         if (res && res.user && res.user.id) {
                             const t = res.user;
-                            onLogin(t.id, t.kakao_account.profile.nickname, t.kakao_account.email);
+                            onLogin(t.id, t.kakao_account.profile.nickname, t.kakao_account.email, "kakao");
                         }
                     })
                     .catch(function (err) {

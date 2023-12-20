@@ -42,6 +42,10 @@
     window.onload = function () {
         visit = url.searchParams.get('visit');
         indicator = $('#indicator')[0];
+        recTimeEl = $('#rec-time')[0];
+        audioEl = $('#playback_audio')[0];
+        resultWrapEl = $('.result-wrap')[0];
+        recordAlertEl = $('#record-alert1')[0];
         if (visit) {
             $.ajax({
                 url: '/mailbox/user_check',
@@ -52,6 +56,7 @@
                 },
                 success: function (data) {
                     $('.title')[0].innerHTML = data.user.nickname + '님에게 편지쓰기';
+                    etag_write_pageview(visit, data.user.nickname);
                 },
                 error: function (err) {
                     console.log('FAILURE : ', err.msg);
@@ -141,6 +146,15 @@
             $('#type-btn2').addClass('clicked');
             tabType = idx;
         }
+    }
+
+    function onClickHome() {
+        etag_mailbox_create(0)
+        window.location.href='/'
+    }
+    
+    function onClickPrev(){
+        window.location.href='/mailbox?visit='+visit
     }
 
     function onClickSend() {

@@ -146,6 +146,20 @@
             align-items: center;
             text-align: center;
         }
+        .text {
+            font-size: 20px;
+            font-weight: 500;
+            color: #fff;
+            width: 60%;
+            height: 20px;
+            white-space: break-spaces;
+            word-break: keep-all;
+            flex: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
         .btns {
             display: flex;
             flex-direction: row;

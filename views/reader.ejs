@@ -1,0 +1,81 @@
+<%-include('header.ejs')%>
+<div class="reader-page">
+    <div class="bottom_ground"></div>
+    <div class="reader-con">
+        <div class="top-div">
+            <div class="title">님의 우체통</div>
+            <div class="sub-title" id="mailcount">아직 도착한 편지가 없어요.</div>
+        </div>
+        <div class="content-box">
+            <div class="from-txt">FROM. {USER_NAME}</div>
+            <div class="down-btn">
+                <img src="/img/ic_download.png" />
+            </div>
+            <div class="text-box open" id="input-box"></div>
+            <div class="audio-box">
+                <img src="/img/ic_headphone.png" />
+                <div class="time">00:00</div>
+            </div>
+        </div>
+        <div class="btm-control">
+            <div class="arrow left"><img src="/img/ic_arrow.png" /></div>
+            <div class="page-txt">{#}/{TOTAL}</div>
+            <div class="arrow"><img src="/img/ic_arrow.png" /></div>
+        </div>
+    </div>
+</div>
+<script>
+    // 데이터 연결필요
+    window.onload = function () {
+        userId = getCookie('userId');
+        fEditor = new FroalaEditor('#input-box', {
+            events: {
+                initialized: function () {
+                    this.toolbar.hide();
+                },
+            },
+        });
+        if (userId) {
+            $.ajax({
+                url: '/user/handshake',
+                async: true,
+                type: 'POST',
+                data: {
+                    userId: userId,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $('.title')[0].innerHTML = nickname + '님의 우체통';
+                        $('#mailcount')[0].innerHTML = data.mail + '개의 편지가 도착했어요!';
+                    } else {
+                        console.log(data.msg);
+                        alert('잠시 후에 다시 시도해주세요.');
+                        window.location.href = '/';
+                    }
+                },
+                error: function (err) {
+                    console.log('FAILURE : ', err.msg);
+                    window.location.href = '/';
+                },
+            });
+
+            $.ajax({
+                url: '/reader/get_mailbox',
+                async: true,
+                type: 'GET',
+                data: {
+                    userId: userId,
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (err) {
+                    console.log('FAILURE : ', err.msg);
+                    window.location.href = '/';
+                },
+            });
+        }
+    };
+</script>
+<%-include('footer.ejs')%>

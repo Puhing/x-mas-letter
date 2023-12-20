@@ -133,6 +133,14 @@
   align-items: center;
   flex-direction: column;
 }
+.mailbox-btm-popup .btm-con2 {
+  height: 10vh;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
 .mailbox-btm-popup .btm-con .contents {
   font-size: 20px;
   font-weight: 500;
@@ -145,6 +153,58 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+.mailbox-btm-popup .btm-con .text {
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  width: 60%;
+  white-space: break-spaces;
+  word-break: keep-all;
+  flex: 0.5;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  text-align: center;
+}
+.mailbox-btm-popup .btm-con .btn-set{
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  padding: 10px 5px;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: 400;
+  color: #fff;
+  flex: 0;
+  text-align: center;
+  word-break: keep-all;
+  cursor: pointer;
+}
+.mailbox-btm-popup .btm-con .btn-set .button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  width: 400px;
+  align-items: center; /* 텍스트를 세로 가운데 정렬 */
+  height: 100%;
+  background-color: #FF5E0E;
+  font-size: 15px;
+  font-weight: 400;
+  color: #fff;
+  flex: 1;
+  text-align: center;
+  white-space: break-spaces;
+  word-break: keep-all;
+  cursor: pointer;
+}
+.mailbox-btm-popup .btm-con .btn-set img{
+  /* 이미지 크기를 원하는 크기로 조정합니다. */
+  width: 40px; /* 원하는 너비로 조정 */
+  height: 40px; /* 원하는 높이로 조정 */
+
+  /* 이미지가 버튼 내에서 가운데로 정렬되도록 설정합니다. */
+  display: block; /* 블록 요소로 지정하여 width 및 height 속성이 적용될 수 있도록 합니다. */
+  margin: 0 auto; /* 가운데 정렬 */
 }
 .mailbox-btm-popup .btm-con .btns {
   display: flex;
@@ -172,6 +232,15 @@
 .mailbox-btm-popup .btm-con .btns .btn:hover {
   scale: 1.03;
 }
+.mailbox-btm-popup .btm-con .btn-set .button:hover {
+  scale: 1.03;
+}
+.mailbox-btm-popup .btm-con .btn-set .button:active {
+  scale: 1.015;
+}
 .mailbox-btm-popup .btm-con .btns .btn:active {
   scale: 1.015;
+}
+.mailbox-btm-popup .btm-con .btn-set:hover {
+  scale: 1.1;
 }/*# sourceMappingURL=mailbox.css.map */
