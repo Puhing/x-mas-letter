@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="message-btm-btns">
-            <div class="btm-btn">이전</div>
+            <div class="btm-btn" onclick="goBack()">이전</div>
             <div class="btm-btn send-btn" onclick="onClickSend()">메세지 남기기</div>
         </div>
     </div>
@@ -165,6 +165,9 @@
             //voice
             saveVoice();
         }
+    }
+    function goBack() {
+        window.history.back();
     }
 
     function saveText() {

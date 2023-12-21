@@ -45,7 +45,7 @@
 }
 .message-page .message-con .message-type-btns .type-btn {
   flex: 1;
-  background-color: #f12139;
+  background-color: #a5556f;
   border-radius: 10px;
   font-size: 24px;
   font-weight: 400;
@@ -68,7 +68,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  background-color: #2d2d2d;
+  background-color: #474646;
   border-radius: 10px;
   gap: 10px;
   margin: 10px 0;
@@ -78,7 +78,7 @@
   font-size: 20px;
   font-weight: 400;
   color: #000;
-  background-color: #50abf1;
+  background-color: #c8b3ee;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
@@ -169,7 +169,7 @@
 }
 .message-page .message-con .message-btm-btns .btm-btn {
   font-size: 20px;
-  background-color: #50abf1;
+  background-color: #754782;
   border-radius: 10px;
   color: #fff;
   padding: 10px 0;
