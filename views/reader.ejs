@@ -25,6 +25,8 @@
     </div>
 </div>
 <script>
+    var letter_content = '';
+    var letter_count = 0;
     // 데이터 연결필요
     window.onload = function () {
         userId = getCookie('userId');
@@ -46,8 +48,16 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.status == 1) {
+                        // nickname = data.user.nickname;
+                        // email = data.user.email;
+                        // myVisit = data.user.uuid;
+                        // letterContent = data.user_mailbox.content
+
                         $('.title')[0].innerHTML = nickname + '님의 우체통';
                         $('#mailcount')[0].innerHTML = data.mail + '개의 편지가 도착했어요!';
+                        // $('.title')[0].innerHTML = letterContent;
+                        // $('#my-mailbox').addClass('open');
+                        // letter_count = data.mail;
                     } else {
                         console.log(data.msg);
                         alert('잠시 후에 다시 시도해주세요.');

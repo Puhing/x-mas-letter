@@ -18,13 +18,13 @@
   position: relative;
   padding: 20px 10px;
   min-width: 480px;
-  max-width: 600px;
+  max-width: 480px;
   height: 80vh;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  background-image: url("/img/img_street_lamp.png");
+  /* background-image: url("/img/img_street_lamp.png"); */
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -45,7 +45,7 @@
 }
 .message-page .message-con .message-type-btns .type-btn {
   flex: 1;
-  background-color: #a5556f;
+  background-color: #FFC107;
   border-radius: 10px;
   font-size: 24px;
   font-weight: 400;
@@ -169,7 +169,7 @@
 }
 .message-page .message-con .message-btm-btns .btm-btn {
   font-size: 20px;
-  background-color: #754782;
+  background-color: #E91E63;
   border-radius: 10px;
   color: #fff;
   padding: 10px 0;

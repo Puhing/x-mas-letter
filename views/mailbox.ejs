@@ -122,9 +122,12 @@
     };
     function onClickMailboxBtmBtn(idx) {
         if (idx == 1) {
+            // 우체통 공유하기
             $('#popup-qwer3').addClass('open');
         } else if (idx == 2) {
             // 편지열기
+            etag_mailbox_open();
+            location.href = '/reader';
         } else if (idx == 3) {
             // qwer 편지받기
             $('#popup-qwer1').addClass('open');

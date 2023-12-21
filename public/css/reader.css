@@ -19,7 +19,7 @@
   top: 0;
   left: 0;
   right: 0;
-  background: url("/img/img_ground.png");
+  /* background: url("/img/img_ground.png"); */
   background-position: center bottom;
   background-repeat: no-repeat;
   z-index: 0;
@@ -34,7 +34,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-image: url("/img/img_street_lamp.png");
+  /* background-image: url("/img/img_street_lamp.png"); */
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
