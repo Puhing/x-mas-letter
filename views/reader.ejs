@@ -10,6 +10,7 @@
             <div class="from-txt">FROM. {USER_NAME}</div>
             <div class="down-btn">
                 <img src="/img/ic_download.png" />
+                
             </div>
             <div class="text-box open" id="input-box"></div>
             <div class="audio-box">
@@ -18,15 +19,13 @@
             </div>
         </div>
         <div class="btm-control">
-            <div class="arrow left"><img src="/img/ic_arrow.png" /></div>
+            <div class="arrow left" onclick="contentBefore()"><img src="/img/ic_arrow.png" /></div>
             <div class="page-txt">{#}/{TOTAL}</div>
-            <div class="arrow"><img src="/img/ic_arrow.png" /></div>
+            <div class="arrow" onclick="contentNext()"><img src="/img/ic_arrow.png" /></div>
         </div>
     </div>
 </div>
 <script>
-    var letter_content = '';
-    var letter_count = 0;
     // 데이터 연결필요
     window.onload = function () {
         userId = getCookie('userId');
@@ -34,8 +33,10 @@
             events: {
                 initialized: function () {
                     this.toolbar.hide();
+
                 },
             },
+
         });
         if (userId) {
             $.ajax({
@@ -46,18 +47,16 @@
                     userId: userId,
                 },
                 dataType: 'json',
+                // 위에 data년이랑 다름
                 success: function (data) {
+                    nickname = data.user.nickname;
+                    mailcount = data.mail
                     if (data.status == 1) {
-                        // nickname = data.user.nickname;
-                        // email = data.user.email;
-                        // myVisit = data.user.uuid;
-                        // letterContent = data.user_mailbox.content
-
+                     
+                        console.log(data,"handshake data");
                         $('.title')[0].innerHTML = nickname + '님의 우체통';
-                        $('#mailcount')[0].innerHTML = data.mail + '개의 편지가 도착했어요!';
-                        // $('.title')[0].innerHTML = letterContent;
-                        // $('#my-mailbox').addClass('open');
-                        // letter_count = data.mail;
+                        $('#mailcount')[0].innerHTML = mailcount + '개의 편지가 도착했어요!';
+                        
                     } else {
                         console.log(data.msg);
                         alert('잠시 후에 다시 시도해주세요.');
@@ -78,7 +77,15 @@
                     userId: userId,
                 },
                 success: function (data) {
-                    console.log(data);
+                    letter = data.list;
+                    console.log(data, "from email");
+                    console.log(letter)
+                    console.log(letter.from, "from")
+                    $('.from-txt')[0].innerHTML = "FROM: " +letter[i].from ;
+                    fEditor.html.insert(letter[i].content);
+                    fEditor.edit.off()
+                    $('.page-txt')[0].innerHTML = "{" + letter[i].id + "}" + "/" + "{" + letter.length + "}"; 
+     
                 },
                 error: function (err) {
                     console.log('FAILURE : ', err.msg);
@@ -87,5 +94,37 @@
             });
         }
     };
+
+    let i = 0; // 전역 변수로 i를 설정
+
+    function contentBefore() {
+        if (i > 0) {
+            i--;
+             // 현재 letter index에 1을 뺍니다.
+            // 여기에 letter[i]에 대한 처리를 추가할 수 있습니다.
+            updateLetterContent();
+        } else {
+            alert('이전 편지가 없습니다.');
+        }
+    }
+
+    function contentNext() {
+        if (i < letter.length - 1) {
+            i ++; // 현재 letter index에 1을 뺍니다.
+            // 여기에 letter[i]에 대한 처리를 추가할 수 있습니다.
+            updateLetterContent();
+        } else {
+            alert('다음 편지가 없습니다.');
+        }
+    }
+
+    function updateLetterContent() {
+        $('.from-txt')[0].innerHTML = "FROM: " + letter[i].from;
+        fEditor.html.set('');
+        fEditor.html.insert(letter[i].content);
+        fEditor.edit.off();
+        $('.page-txt')[0].innerHTML = "{" + letter[i].id + "}" + "/" + "{" + letter.length + "}";
+    }
+
 </script>
 <%-include('footer.ejs')%>

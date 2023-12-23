@@ -86,7 +86,7 @@
   display: block;
 }
 .reader-page .reader-con .content-box .text-box .fr-view {
-  min-height: 35vh;
+  min-height: 30vh;
   max-height: 50vh;
 }
 .reader-page .reader-con .content-box .audio-box {
@@ -164,6 +164,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #fff;
   font-size: 20px;
   font-weight: 300;
 }/*# sourceMappingURL=reader.css.map */
