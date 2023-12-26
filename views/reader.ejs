@@ -27,6 +27,8 @@
 </div>
 <script>
     // 데이터 연결필요
+    let i = 0;
+
     window.onload = function () {
         userId = getCookie('userId');
         fEditor = new FroalaEditor('#input-box', {
@@ -94,8 +96,6 @@
             });
         }
     };
-
-    let i = 0; // 전역 변수로 i를 설정
 
     function contentBefore() {
         if (i > 0) {

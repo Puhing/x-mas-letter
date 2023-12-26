@@ -14,13 +14,21 @@
         <div class="text-write-wrap">
             <div class="input-box" id="input-box"></div>
         </div>
-        <div class="voice-record-wrap" onclick="onClickRecordVoice()">
-            <div class="record-btn">
+        <div class="voice-record-wrap">
+            <div class="record-btn" onclick="onClickRecordVoice()">
                 <img src="/img/ic_microphone.png" />
             </div>
+
+            <div class="record-desc" id="record-alert1">녹음 버튼을 눌러 녹음 편지를 남길 수 있습니다</div>
+            
             <div class="info-wrap">
                 <div class="indicator" id="indicator"></div>
-                <div class="time">00:00</div>
+                <div class="time" id="rec-time">00:00</div>
+            </div>
+
+            <div class="result-wrap">
+                <audio id="playback_audio" controls>Your browser does not support the audio element.</audio>
+                <div class="refresh"  onclick="onClickRecordRefresh()">X</div>
             </div>
         </div>
         <div class="message-btm-btns">
@@ -33,12 +41,19 @@
     var tabType = 1;
     var state = false;
     var recorder = null;
-    var audio = null,
-        indicator = null;
+    var audio = [],
+        indicator = null,
+        interval = null,
+        elapsedSec = 0,
+        recTimeEl,
+        audioEl,
+        resultWrapEl;
+        // recordAlertEl;
     var userId = getCookie('userId');
     var url = new URL(location.href);
     var fEditor;
     var visit;
+
     window.onload = function () {
         visit = url.searchParams.get('visit');
         indicator = $('#indicator')[0];
@@ -198,34 +213,58 @@
         });
     }
 
+    function onClickRecordRefresh(){
+        etag_write_voice_del();
+        recordRefresh();
+    }
+
+    function recordRefresh() {
+        audioEl.src = null;
+        $(resultWrapEl).removeClass('open');
+        audio = [];
+    }
+
     function onClickRecordVoice() {
         if (state && recorder) {
             recorder.stop();
             state = false;
-            var p = navigator.mediaDevices.getUserMedia({ audio: true });
-            p.then(function (mediaStream) {
-                recorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm' });
-                recorder.addEventListener('dataavailable', ({ data }) => {
-                    console.log('NEW DATA!!22', data);
-                    audio = data;
-                });
-                recorder.start();
-            });
-
-            p.catch(function (err) {
-                console.log(err.name);
-            });
+            console.log('STOP');
             return;
         }
+        if (audio.length == 0) {
+            elapsedSec = 0;
+        }
+
+
+        recordRefresh();
+
         var p = navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log("404전");
         p.then(function (mediaStream) {
+            console.log("404후");
+            interval = setInterval(() => {
+                elapsedSec += 1;
+                if (recTimeEl) {
+                    recTimeEl.innerHTML = fancyTimeFormat(elapsedSec);
+                }
+            }, 1000);
+
             recorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm' });
             recorder.addEventListener('dataavailable', ({ data }) => {
                 console.log('NEW DATA!!33', data);
-                audio = data;
+                audio.push(data);
+
+                if (interval) clearInterval(interval);
+
+                const blob = new Blob(audio, { type: 'audio/aac' });
+                aSource = URL.createObjectURL(blob);
+                audioEl.src = aSource;
+                $(resultWrapEl).addClass('open');
             });
 
             recorder.start();
+            console.log("스타트");
+
             const context = new AudioContext();
             const source = context.createMediaStreamSource(mediaStream);
             const analyzer = context.createAnalyser();
@@ -240,6 +279,23 @@
             }
 
             function tick() {
+                if (state == false){
+                    indicator.style.width = "0%";
+                    $(recordAlertEl).text('녹음 버튼을 눌러 녹음 편지를 남길 수 있습니다.');
+                    $(".record-btn img").attr("src", "/img/ic_microphone.png");
+                    $(".record-btn").css("animation-name","_");
+                    recTimeEl.innerHTML = "00:00";
+
+                    etag_write_voice_record("stop");
+
+                    return ;
+                }
+
+                $(recordAlertEl).text('녹음을 종료하시려면 버튼을 한번 더 눌러주세요.');
+                $(".record-btn img").attr("src", "/img/pause.png");
+                
+                $(".record-btn").css("animation-name","ripple")
+
                 const peak = getPeakLevel();
                 indicator.style.width = `${peak * 100}%`;
                 requestAnimationFrame(tick);
@@ -255,29 +311,42 @@
     }
 
     function saveVoice() {
-        var fd = new FormData();
-        fd.append('file', audio);
-        fd.append('nickname', $('.from-input').val());
-        fd.append('visit', visit);
-        $.ajax({
-            url: '/message/save_voice',
-            type: 'POST',
-            data: fd,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                if (data.status == 1) {
-                    alert('등록완료');
-                    location.reload();
-                } else {
+        let nick = $('.from-input').val();
+        if(nick.length < 1){
+            return alert ("닉네임을 입력해주세요!")
+        }
+
+        if (audio.length > 0){
+            var fd = new FormData();
+            const blob = new Blob(audio, { type: 'audio/aac' });
+            fd.append('file', audio);
+            fd.append('nickname', $('.from-input').val());
+            fd.append('visit', visit);
+            $.ajax({
+                url: '/message/save_voice',
+                type: 'POST',
+                data: fd,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.status == 1) {
+                        alert('등록완료');
+                        location.reload();
+                        etag_write_complete("voice", userId ? "yes" : "no");
+
+                    } else {
+                        console.log(data, '녹음은 됬는디 안보내지누');
+                        alert('잠시 후에 다시 시도해주세요3.');
+                    }
+                },
+                error: function (err) {
+                    console.log('FAILURE : ', err.msg);
                     alert('잠시 후에 다시 시도해주세요.');
-                }
-            },
-            error: function (err) {
-                console.log('FAILURE : ', err.msg);
-                alert('잠시 후에 다시 시도해주세요.');
-            },
-        });
+                },
+            });
+        } else {
+            alert('먼저 녹음해주세요.');
+        }
     }
 </script>
 <%-include('footer.ejs')%>
