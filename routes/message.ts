@@ -1,6 +1,7 @@
 import express from 'express';
 import moment from 'moment';
 import fs from 'fs';
+
 //
 import MySQL from '../MySQL';
 import { upload } from '../util/fileupload';
@@ -10,6 +11,7 @@ const router = express.Router();
 const read_db = MySQL.read();
 const db = MySQL.write();
 
+
 router.get('/', async (req, res) => {
     res.render('message', {
         title: '편지 남기기',
@@ -17,12 +19,12 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/save_voice', upload.single('file'), async (req, res) => {
-    console.log(req.body, req.file);
+    console.log(req.body, req.file, '1차 req');
     const { nickname, visit } = req.body;
     try {
         const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
         if(_user){
-            let result = await db.query(`INSERT INTO TB_USER_MAILBOX (userId, content, type, addedAt, \`from\`) VALUES (?, ?, 1, NOW(), ?)`, [_user.userId, req.file.path, nickname]);
+            let result = await db.query(`INSERT INTO TB_USER_MAILBOX (userId, file, type, addedAt, \`from\`) VALUES (?, ?, 2, NOW(), ?)`, [_user.userId, req.file.path, nickname]);
             if (result.insertId > 0) {
                 return res.json({ status: 1, msg: 'Success' });
             } else {

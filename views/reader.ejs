@@ -38,7 +38,6 @@
 
                 },
             },
-
         });
         if (userId) {
             $.ajax({
@@ -81,11 +80,10 @@
                 success: function (data) {
                     letter = data.list;
                     console.log(data, "from email");
-                    console.log(letter)
-                    console.log(letter.from, "from")
+                    console.log(letter.from);
                     $('.from-txt')[0].innerHTML = "FROM: " +letter[i].from ;
                     fEditor.html.insert(letter[i].content);
-                    fEditor.edit.off()
+                    fEditor.edit.off();
                     $('.page-txt')[0].innerHTML = "{" + letter[i].id + "}" + "/" + "{" + letter.length + "}"; 
      
                 },

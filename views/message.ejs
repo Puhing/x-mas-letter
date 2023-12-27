@@ -47,8 +47,8 @@
         elapsedSec = 0,
         recTimeEl,
         audioEl,
-        resultWrapEl;
-        // recordAlertEl;
+        resultWrapEl,
+        recordAlertEl;
     var userId = getCookie('userId');
     var url = new URL(location.href);
     var fEditor;
@@ -72,6 +72,7 @@
                 success: function (data) {
                     $('.title')[0].innerHTML = data.user.nickname + '님에게 편지쓰기';
                     etag_write_pageview(visit, data.user.nickname);
+                    console.log(data,visit,'visit확인');
                 },
                 error: function (err) {
                     console.log('FAILURE : ', err.msg);
@@ -253,6 +254,7 @@
             recorder.addEventListener('dataavailable', ({ data }) => {
                 console.log('NEW DATA!!33', data);
                 audio.push(data);
+                console.log('NEW DATA!!44', audio);
 
                 if (interval) clearInterval(interval);
 
@@ -319,7 +321,10 @@
         if (audio.length > 0){
             var fd = new FormData();
             const blob = new Blob(audio, { type: 'audio/aac' });
-            fd.append('file', audio);
+            aSource = URL.createObjectURL(blob);
+            audio.src = aSource;
+
+            fd.append('file', blob);
             fd.append('nickname', $('.from-input').val());
             fd.append('visit', visit);
             $.ajax({
@@ -340,8 +345,9 @@
                     }
                 },
                 error: function (err) {
-                    console.log('FAILURE : ', err.msg);
-                    alert('잠시 후에 다시 시도해주세요.');
+                    console.log('FAILURE : ', err.msg,fd);
+                    console.log(blob, '블랍이뭐지');
+                    alert('잠시 후에 다시 시도해주세요./에러');
                 },
             });
         } else {

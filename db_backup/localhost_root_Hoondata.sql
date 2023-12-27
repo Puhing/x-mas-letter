@@ -27,16 +27,17 @@ CREATE TABLE `TB_USER` (
   PRIMARY KEY (`userId`),
   UNIQUE KEY `uid` (`uid`),
   UNIQUE KEY `uuid` (`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- [TABLE CREATE SQL] TB_USER_MAILBOX
 CREATE TABLE `TB_USER_MAILBOX` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `userId` int DEFAULT NULL,
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `content` text,
   `type` int DEFAULT NULL COMMENT '1:txt, 2:audio, 3:qwer',
   `addedAt` datetime DEFAULT CURRENT_TIMESTAMP,
   `from` varchar(255) DEFAULT NULL,
+  `file` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
