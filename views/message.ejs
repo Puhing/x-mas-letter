@@ -236,7 +236,6 @@
             elapsedSec = 0;
         }
 
-
         recordRefresh();
 
         var p = navigator.mediaDevices.getUserMedia({ audio: true });
@@ -321,14 +320,13 @@
         if (audio.length > 0){
             var fd = new FormData();
             const blob = new Blob(audio, { type: 'audio/aac' });
-            aSource = URL.createObjectURL(blob);
-            audio.src = aSource;
-
             fd.append('file', blob);
             fd.append('nickname', $('.from-input').val());
             fd.append('visit', visit);
+            console.log(fd, blob, visit, 'ㅍㅍ');
             $.ajax({
                 url: '/message/save_voice',
+                async: true,
                 type: 'POST',
                 data: fd,
                 contentType: false,

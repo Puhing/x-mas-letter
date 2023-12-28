@@ -123,19 +123,36 @@
   display: flex;
 }
 .message-page .message-con .voice-record-wrap .record-btn {
-  width: 100%;
+  width: 100px;
+  height: 100px;
+  animation: _ 5s linear infinite;
+  animation-duration: 0.5s;
+  border-radius: 50%;
+  background: rgb(251, 63, 63);
+  background: radial-gradient(circle, rgb(251, 63, 63) 0%, rgb(252, 70, 107) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
 }
 .message-page .message-con .voice-record-wrap .record-btn img {
-  width: 20%;
+  width: 30px;
 }
 .message-page .message-con .voice-record-wrap .record-btn:hover {
   scale: 1.1;
 }
 .message-page .message-con .voice-record-wrap .record-btn:active {
   scale: 1.05;
+}
+.message-page .message-con .voice-record-wrap .record-desc {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+}
+.message-page .message-con .voice-record-wrap .record-desc.open {
+  display: block;
 }
 .message-page .message-con .voice-record-wrap .info-wrap {
   display: flex;
