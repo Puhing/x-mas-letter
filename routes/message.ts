@@ -14,7 +14,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 const read_db = MySQL.read();
 const db = MySQL.write();
-const directory = 'uploads';
+const directory = 'public/uploads';
 
 router.get('/', async (req, res) => {
     res.render('message', {
@@ -25,14 +25,14 @@ router.get('/', async (req, res) => {
 router.post('/save_voice', upload.single('file'), async (req, res) => {
     console.log(req.body, req.file, '1차 req');
     const { nickname, visit } = req.body;
-    const directory = 'uploads';
+    const directory = 'public/uploads';
 
-    if (!fs.existsSync(directory)) {
-        fs.mkdirSync(directory);
-        console.log(`${directory} 디렉토리가 생성되었습니다.`);
-    } else {
-        console.log(`${directory} 디렉토리가 이미 존재합니다.`);
-    }
+    // if (!fs.existsSync(directory)) {
+    //     fs.mkdirSync(directory);
+    //     console.log(`${directory} 디렉토리가 생성되었습니다.`);
+    // } else {
+    //     // console.log(`${directory} 디렉토리가 이미 존재합니다.`);
+    // }
 
     try {
         const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);

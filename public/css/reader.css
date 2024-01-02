@@ -95,13 +95,23 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 50vh;
+  height: auto;
 }
 .reader-page .reader-con .content-box .audio-box.open {
   display: flex;
 }
 .reader-page .reader-con .content-box .audio-box img {
-  width: 100%;
+  animation: _ 5s linear infinite;
+  animation-duration: 0.5s;
+  width: 10%;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.reader-page .reader-con .content-box .audio-box img .refresh:hover{
+  scale: 1.05;
+}
+.reader-page .reader-con .content-box .audio-box img .refresh:active {
+  scale: 1.02;
 }
 .reader-page .reader-con .content-box .audio-box .time {
   color: #fff;

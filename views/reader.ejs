@@ -13,10 +13,10 @@
                 
             </div>
             <div class="text-box open" id="input-box"></div>
-            <div class="audio-box" id="listen-box">
-                <audio id="play_audio" controls>Your browser does not support the audio element.</audio>
-                <img src="/img/ic_headphone.png" />
-                <div class="time">00:00</div>
+            <div class="audio-box" id="listen-box" >
+                <!-- <img src="/img/ic_headphone.png" /> -->
+                <audio id="play_audio" controls><source id = "play_source" type = "audio/webm"/></audio>
+                <!-- <div class="time">00:00</div> -->
             </div>
         </div>
         <div class="btm-control">
@@ -29,10 +29,9 @@
 <script>
     // 데이터 연결필요
     let i = 0;
-    var audioEl;
 
     window.onload = function () {
-        audioEl = $('#play_audio')[0];
+        var url;
         userId = getCookie('userId');
         fEditor = new FroalaEditor('#input-box', {
             events: {
@@ -51,7 +50,7 @@
                     userId: userId,
                 },
                 dataType: 'json',
-                // 위에 data년이랑 다름
+                // 위에 data랑 다름
                 success: function (data) {
                     nickname = data.user.nickname;
                     mailcount = data.mail
@@ -88,7 +87,6 @@
                     fEditor.html.insert(letter[i].content);
                     fEditor.edit.off();
                     $('.page-txt')[0].innerHTML = "{" + letter[i].id + "}" + "/" + "{" + letter.length + "}"; 
-     
                 },
                 error: function (err) {
                     console.log('FAILURE : ', err.msg);
@@ -100,7 +98,7 @@
 
     function contentBefore() {
         if (i > 0) {
-            i--;
+            i --;
              // 현재 letter index에 1을 뺍니다.
             // 여기에 letter[i]에 대한 처리를 추가할 수 있습니다.
             updateLetterContent();
@@ -122,17 +120,24 @@
     function updateLetterContent() {
         $('.from-txt')[0].innerHTML = "FROM: " + letter[i].from;
         fEditor.html.set('');
-        if (typeof letter[i].type == 1){
+        if (letter[i].type == 1){
             fEditor.html.insert(letter[i].content);
-            } else {
-                // fEditor.html.insert(letter[i].content);
-                // aSource = letter[i].content;
-                // audioEl.src = aSource;
-                console.log(letter, "파일데이터");
-            }
+            $('#listen-box').removeClass('open');
+            $('#input-box').addClass('open');
+        } else if(letter[i].type == 2){
+            fEditor.html.insert('해당 메세지는 음성메세지입니다. 아래 재생 버튼을 눌러 확인해보세요!');
+            $('#listen-box').addClass('open');
+            var ad = document.querySelector('#play_source');
+            ad.src = letter[i].content.replace('public/','');
+            var ap = document.getElementById('play_audio');
+            ap.load();
+        } else {
+            console.log("에러");
+        }
         fEditor.edit.off();
         $('.page-txt')[0].innerHTML = "{" + letter[i].id + "}" + "/" + "{" + letter.length + "}";
     }
 
 </script>
 <%-include('footer.ejs')%>
+

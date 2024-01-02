@@ -1,8 +1,9 @@
 import multer from "multer";
 
+
 let storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        callback(null, "uploads/");
+        callback(null, "public/uploads/");
     },
     filename: function (req, file, callback) {
         callback(null, Date.now() + "_" + file.originalname + ".webm");
