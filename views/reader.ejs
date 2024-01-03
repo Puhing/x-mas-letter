@@ -1,4 +1,5 @@
 <%-include('header.ejs')%>
+
 <div class="reader-page">
     <div class="bottom_ground"></div>
     <div class="reader-con">
@@ -8,9 +9,10 @@
         </div>
         <div class="content-box">
             <div class="from-txt">FROM. {USER_NAME}</div>
-            <div class="down-btn">
-                <img src="/img/ic_download.png" />
-                
+            <div class="down-btn" id = "download_btn">
+                <a href="" id = "download_source">
+                    <img src="/img/ic_download.png" />
+                </a>
             </div>
             <div class="text-box open" id="input-box"></div>
             <div class="audio-box" id="listen-box" >
@@ -32,6 +34,9 @@
 
     window.onload = function () {
         var url;
+        var ignoreSrc = document.getElementById('download_source');
+            ignoreSrc.style.display = 'none';
+
         userId = getCookie('userId');
         fEditor = new FroalaEditor('#input-box', {
             events: {
@@ -117,20 +122,46 @@
         }
     }
 
+    function changeHref(newHref) {
+    document.getElementById('download_source').href = newHref;
+    }
+
     function updateLetterContent() {
         $('.from-txt')[0].innerHTML = "FROM: " + letter[i].from;
         fEditor.html.set('');
         if (letter[i].type == 1){
             fEditor.html.insert(letter[i].content);
+
+            var ignoreBtn = document.getElementById('download_btn');
+            ignoreBtn.style.display = 'none';
+
+            var ignoreSrc = document.getElementById('download_source');
+            ignoreSrc.style.display = 'none';
+
             $('#listen-box').removeClass('open');
             $('#input-box').addClass('open');
+
         } else if(letter[i].type == 2){
             fEditor.html.insert('해당 메세지는 음성메세지입니다. 아래 재생 버튼을 눌러 확인해보세요!');
             $('#listen-box').addClass('open');
+
+            var ignoreBtn = document.getElementById('download_btn');
+            ignoreBtn.style.display = 'block';
+
+            var ignoreSrc = document.getElementById('download_source');
+            ignoreSrc.style.display = 'block';
+
+            changeHref(letter[i].content.replace('public/',''));
+
             var ad = document.querySelector('#play_source');
             ad.src = letter[i].content.replace('public/','');
+
             var ap = document.getElementById('play_audio');
             ap.load();
+
+            var aq = document.querySelector('#download_source');
+            aq.src = letter[i].content.replace('public/','');
+
         } else {
             console.log("에러");
         }

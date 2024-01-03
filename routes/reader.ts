@@ -12,6 +12,14 @@ const router = express.Router();
 const read_db = MySQL.read();
 const db = MySQL.write();
 
+const app = express();
+
+app.use('/public', express.static('public')); // 정적 파일 서빙 설정
+
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
+
 router.get('/', async (req, res) => {
     res.render('reader', {
         title: '우체통',
