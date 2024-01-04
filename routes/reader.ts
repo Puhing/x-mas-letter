@@ -54,4 +54,20 @@ router.get('/get_mailbox', async (req, res) => {
     }
 });
 
+
+// router.get('/download/:filename', (req, res) => {
+//     const fileName = req.params.filename;
+//     const filePath = path.join(__dirname, 'public/uploads', fileName); // 파일이 있는 경로 설정
+
+//     // 파일이 존재하는지 확인 후 응답
+//     if (fs.existsSync(filePath)) {
+//         res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+//         res.setHeader('Content-Type', 'text/plain'); // MIME 타입을 명시적으로 지정
+//         res.sendFile(filePath);
+//     } else {
+//         res.status(404).send('File not found');
+//     }
+// });
+
+
 export default router;

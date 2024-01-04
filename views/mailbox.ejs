@@ -98,6 +98,7 @@
                         $('#mailcount')[0].innerHTML = data.mail + '개의 편지가 도착했어요!';
                         $('#my-mailbox').addClass('open');
                         letter_count = data.mail;
+                        console.log(data, '무슨데이타인지 잘보고 Id 넣어야함');
 
                         var clipboard = new ClipboardJS('#mylink');
                         clipboard.on('success', function () {

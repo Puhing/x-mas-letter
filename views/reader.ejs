@@ -10,10 +10,10 @@
         <div class="content-box">
             <div class="from-txt">FROM. {USER_NAME}</div>
             <div class="down-btn" id = "download_btn">
-                <a href="" id = "download_source">
-                    <img src="/img/ic_download.png" />
-                </a>
+                <a href="" id = "txt-number" download><img src="/img/ic_download.png" /></a>
+                <a href="" id = "download_source" download=""><img src="/img/ic_download.png" /></a>
             </div>
+
             <div class="text-box open" id="input-box"></div>
             <div class="audio-box" id="listen-box" >
                 <!-- <img src="/img/ic_headphone.png" /> -->
@@ -34,8 +34,6 @@
 
     window.onload = function () {
         var url;
-        var ignoreSrc = document.getElementById('download_source');
-            ignoreSrc.style.display = 'none';
 
         userId = getCookie('userId');
         fEditor = new FroalaEditor('#input-box', {
@@ -88,10 +86,20 @@
                     letter = data.list;
                     console.log(data, "from email");
                     console.log(letter, "데이터 리스트");
-                    $('.from-txt')[0].innerHTML = "FROM: " +letter[i].from ;
+                    $('.from-txt')[0].innerHTML = "FROM: " + letter[i].from ;
                     fEditor.html.insert(letter[i].content);
                     fEditor.edit.off();
                     $('.page-txt')[0].innerHTML = "{" + letter[i].id + "}" + "/" + "{" + letter.length + "}"; 
+                    changeTxtHref('uploads/text_' + [i+1] + '.txt');
+                    changeHref(letter[i].content.replace('public/',''));
+
+                    if (letter[i].type == 1){
+                        var hideVoiceDown = document.getElementById('download_source');
+                        hideVoiceDown.style.display = 'none'; // 요소를 숨김
+                    } else {
+                        var hideTxtDown = document.getElementById('txt-number');
+                        hideTxtDown.style.display = 'none'; // 요소를 숨김
+                    }
                 },
                 error: function (err) {
                     console.log('FAILURE : ', err.msg);
@@ -126,17 +134,23 @@
     document.getElementById('download_source').href = newHref;
     }
 
+    function changeTxtHref(newHref) {
+    document.getElementById('txt-number').href = newHref;
+    }
+
     function updateLetterContent() {
         $('.from-txt')[0].innerHTML = "FROM: " + letter[i].from;
         fEditor.html.set('');
         if (letter[i].type == 1){
             fEditor.html.insert(letter[i].content);
 
-            var ignoreBtn = document.getElementById('download_btn');
-            ignoreBtn.style.display = 'none';
+            changeTxtHref('uploads/text_' + [i+1] + '.txt');
 
-            var ignoreSrc = document.getElementById('download_source');
-            ignoreSrc.style.display = 'none';
+            var hideVoiceDown = document.getElementById('download_source');
+            hideVoiceDown.style.display = 'none'; // 요소를 숨김
+
+            var hideTxtDown = document.getElementById('txt-number');
+            hideTxtDown.style.display = 'block';
 
             $('#listen-box').removeClass('open');
             $('#input-box').addClass('open');
@@ -144,12 +158,6 @@
         } else if(letter[i].type == 2){
             fEditor.html.insert('해당 메세지는 음성메세지입니다. 아래 재생 버튼을 눌러 확인해보세요!');
             $('#listen-box').addClass('open');
-
-            var ignoreBtn = document.getElementById('download_btn');
-            ignoreBtn.style.display = 'block';
-
-            var ignoreSrc = document.getElementById('download_source');
-            ignoreSrc.style.display = 'block';
 
             changeHref(letter[i].content.replace('public/',''));
 
@@ -161,6 +169,12 @@
 
             var aq = document.querySelector('#download_source');
             aq.src = letter[i].content.replace('public/','');
+
+            var hideVoiceDown = document.getElementById('download_source');
+            hideVoiceDown.style.display = 'block';
+
+            var hideTxtDown = document.getElementById('txt-number');
+            hideTxtDown.style.display = 'none'; // 요소를 숨김
 
         } else {
             console.log("에러");
