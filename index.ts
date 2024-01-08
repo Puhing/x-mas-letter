@@ -5,7 +5,6 @@ import routes from './routes';
 import { RedisStorage } from './util/Storage';
 const storage = new RedisStorage();
 storage.connect();
-
 const app = express();
 
 app.use('/', express.static('./public'));

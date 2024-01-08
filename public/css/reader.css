@@ -132,7 +132,7 @@
   position: absolute;
   right: 10px;
   top: 20px;
-  /* cursor: pointer; */
+  cursor: pointer;
 }
 .reader-page .reader-con .content-box .down-btn:hover {
   scale: 1.05;

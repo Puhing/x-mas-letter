@@ -1,0 +1,55 @@
+<%-include('header.ejs')%>
+
+<div class = 'chat-page'>
+    <div id="message-container"></div>
+    <form id = "form">
+        <label for = "message-input"> Message </label>
+        <input type = "text" id = "message-input">
+        <button type = "submit" id = "send-button"> Send </button>
+        <label for = "room-input"> Room </label>
+        <input type = "text" id = "room-input">
+        <button type= "button" id = "room-button"> Join </button>
+    </form>
+</div>
+
+<script>
+    const joinRoomButton = document.getElementById ("room-button")
+    const messageInput = document.getElementById ("message-input")
+    const roomInput = document.getElementById ("room-input")
+    const form = document.getElementById ("form")
+
+    const socket = io('http://localhost:3000')
+
+    socket.on('connect', () => {
+        displayMessage(`You connected with id: ${socket.id}`)
+    })
+
+    socket.on('receive-message', message => {
+        displayMessage(message)
+    })
+
+    form.addEventListener("submit", e => {
+        e.preventDefault()
+        const message = messageInput.value
+        const room = roomInput.value
+
+        if (message === "") return
+        displayMessage(message)
+        socket.emit("send-message", message)
+
+        messageInput.value = ""
+    })
+
+    joinRoomButton.addEventListener("click", () => {
+        const room = roomInput.value
+    })
+
+    function displayMessage(message) {
+        const div = document.createElement("div")
+        div.textContent = message
+        document.getElementById("message-container").append(div)
+    }
+
+</script>
+
+<%-include('footer.ejs')%>

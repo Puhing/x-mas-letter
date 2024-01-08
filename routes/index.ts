@@ -6,6 +6,7 @@ import user from './user';
 import message from './message';
 import mailbox from './mailbox';
 import reader from './reader';
+import chat from './chat';
 //
 const router = express.Router();
 const read_db = MySQL.read();
@@ -28,4 +29,5 @@ router.use('/user', user);
 router.use('/message', message);
 router.use('/mailbox', mailbox);
 router.use('/reader', reader);
+router.use('/chat', chat);
 export default router;

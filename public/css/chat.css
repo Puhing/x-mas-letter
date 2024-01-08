@@ -1,0 +1,27 @@
+.chat-page {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background: url("/img/img_main_background.png");
+    background-position: center bottom;
+    background-size: cover;
+    background-repeat: repeat;
+    height: 100vh;
+  }
+  .chat-page #message-container {
+    margin: 100px;
+    border: 1px solid black;
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  .chat-page #message-container div {
+    background-color: #ccc;
+    padding: 5px;
+  }
+  .chat-page form {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  /*# sourceMappingURL=mailbox.css.map
