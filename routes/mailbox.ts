@@ -1,8 +1,6 @@
 import express from 'express';
 import moment from 'moment';
 import fs from 'fs';
-import http from 'http';
-import socketio from 'socket.io';
 //
 import MySQL from '../MySQL';
 import { upload } from '../util/fileupload';
@@ -11,11 +9,6 @@ import { decrypt } from '../util/encryption';
 const router = express.Router();
 const read_db = MySQL.read();
 const db = MySQL.write();
-const app = express();
-const server = http.createServer(app);
-const PORT = 8080;
-const io = socketio.listen(server);
-
 
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
@@ -110,28 +103,5 @@ router.post('/get_qwer', async (req, res) => {
         return res.json({ status: -1, msg: 'Failed' });
     }
 });
-
-app.get("/", (req, res) => {
-    fs.readFile("./chat.html", (error, data) => {
-        if (error) {
-            console.log(error);
-            return res.sendStatus(500);
-        }
-
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(data);
-    });
-});
-
-io.sockets.on("connection", socket => {
-    socket.on("message", data => {
-        io.sockets.emit("message", data);
-    });
-});
-
-server.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`);
-});
-
 
 export default router;
