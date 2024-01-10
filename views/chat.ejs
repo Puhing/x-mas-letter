@@ -1,14 +1,21 @@
 <%-include('header.ejs')%>
 
-<div class = 'chat-page'>
-    <div id="message-container"></div>
-    <form id = "form">
-        <label for = "message-input"> Message </label>
-        <input type = "text" id = "message-input">
-        <button type = "submit" id = "send-button"> Send </button>
-        <label for = "room-input"> Room </label>
-        <input type = "text" id = "room-input">
-        <button type= "button" id = "room-button"> Join </button>
+<div class = "chatPage">
+    <div class = topChat>
+        <div class = "roomList" id="room-list"></div>
+        <div class = "chatSpace" id="message-container"></div>
+    </div>
+    <form class = "formBox" id = "form">
+        <div class = "roomForm" id = "room-form">
+            <label class = "roomLabel" for = "room-input"> Room </label>
+            <input class = "roomInput" type = "text" id = "room-input"></input>
+            <button class = "joinButton" type = "button" id = "room-button"> Join </button>
+        </div>
+        <div class = "messageForm" id = "message-form">
+            <label class = "messageLabel" for = "message-input"> Message </label>
+            <input class = "messageInput" type = "text" id = "message-input"></input>
+            <button class = "sendButton" type = "submit" id = "send-button"> Send </button>
+        </div>
     </form>
 </div>
 
@@ -28,6 +35,11 @@
         displayMessage(message)
     })
 
+    socket.on('updateRoomList', (room) => {
+        displayRoomList(room)
+        console.log('방 생성:', room)
+    });
+
     form.addEventListener("submit", e => {
         e.preventDefault()
         const message = messageInput.value
@@ -35,19 +47,29 @@
 
         if (message === "") return
         displayMessage(message)
-        socket.emit("send-message", message)
+        socket.emit("send-message", message, room)
 
         messageInput.value = ""
     })
 
     joinRoomButton.addEventListener("click", () => {
         const room = roomInput.value
+        socket.emit("join-room", room, message => {
+            displayMessage(message)
+            console.log(room, '룸 정보')
+        })
     })
 
     function displayMessage(message) {
         const div = document.createElement("div")
         div.textContent = message
         document.getElementById("message-container").append(div)
+    }
+
+    function displayRoomList(room) {
+        const div = document.createElement("div")
+        div.textContent = `방이름: ${room}`
+        document.getElementById("room-list").append(div)
     }
 
 </script>

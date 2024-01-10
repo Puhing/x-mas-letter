@@ -1,27 +1,123 @@
-.chat-page {
-    margin: 0 auto;
+.chatPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: lightpink;
+  height: 100vh;
+}
+.chatPage .topChat {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 70%;
+}
+.chatPage .topChat .roomList {
+  margin-top: 5%;
+  margin-left: 50px;
+  padding: 10px;
+  word-wrap: break-word;
+  border-top-left-radius: 20px;
+  border-bottom: 1px solid lightgrey;
+  box-shadow: 1px 1px 3px 1px #6b6b6d;
+  overflow-y: auto;
+  background-color: palevioletred;
+  width: 10%;
+}
+.chatPage .topChat .chatSpace {
+  margin-top: 5%;
+  margin-right: 50px;
+  border-left: 1px solid lightgrey;
+  border-bottom: 1px solid lightgray;
+  border-top-right-radius: 20px;
+  box-shadow: 1px 1px 3px 1px #6b6b6d;
+  overflow-y: auto;
+  background-color: #ffffff;
+  width: 90%;
+}
+.chatPage .topChat .chatSpace div {
+  background-color: #ccc;
+  padding: 5px;
+}
+.chatPage .formBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: center;
+  width: 100%;
+  height: 30%;
+}
+.chatPage .formBox .roomForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-bottom-left-radius: 20px;
+  box-shadow: 1px 1px 3px 1px #6b6b6d;
+  text-align: center;
+  margin-left: 50px;
+  width: 10%;
+  height: 30%;
+}
+.chatPage .formBox .roomForm .roomLabel {
+  /* text-align: left; */
+  color: #ffffff; 
+  padding-left: 5px;
+  background-color: rgb(142, 51, 83);
+  width: 100%;
+  height: 30%;
+}
+.chatPage .formBox .roomForm .roomInput {
+  border: none;
+  padding: 5px;
+  overflow-y: auto;
+  /* background-color: rgb(142, 51, 83); */
+  width: 100%;
+  height: 70%;
+}
+.chatPage .formBox .roomForm .joinButton {
+  border: none;
+  color: #fff;
+  padding: 5px;
+  border-bottom-left-radius: 20px;
+  background-color: rgb(142, 51, 83);
+
+  cursor: pointer;
+  &:hover {
+    scale: 1.03;
+  }
+  &:active {
+    scale: 1.015;
+  }
+}
+.chatPage .formBox .messageForm {
     display: flex;
-    justify-content: center;
     flex-direction: column;
-    background: url("/img/img_main_background.png");
-    background-position: center bottom;
-    background-size: cover;
-    background-repeat: repeat;
-    height: 100vh;
-  }
-  .chat-page #message-container {
-    margin: 100px;
-    border: 1px solid black;
-    flex-grow: 1;
-    overflow-y: auto;
-  }
-  .chat-page #message-container div {
-    background-color: #ccc;
-    padding: 5px;
-  }
-  .chat-page form {
+    justify-content: flex-start;
+    border-bottom-right-radius: 20px;
     text-align: center;
-    margin: 20px;
+    border-left: 1px solid lightgrey;
+    box-shadow: 1px 1px 3px 1px #6b6b6d;
+    margin-right: 50px;
+    width: 90%;
+    height: 30%;
   }
-  
-  /*# sourceMappingURL=mailbox.css.map
+.chatPage .formBox .messageForm .messageLabel{
+  text-align: left;
+  padding-left: 5px;
+  margin-right: 50px;
+  background-color: #ffffff;
+  width: 100%;
+  height: 30%;
+}
+.chatPage .formBox .messageForm .messageInput{
+  margin-right: 50px;
+  padding: 5px;
+  border-bottom-right-radius: 20px;
+  width: 100%;
+  height: 70%;
+  border: none;
+}
+.chatPage .formBox .messageForm .sendButton{
+  display: none;
+}
+/*# sourceMappingURL=chat.css.map
