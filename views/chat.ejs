@@ -16,34 +16,69 @@
             <input class = "messageInput" type = "text" id = "message-input"></input>
             <button class = "sendButton" type = "submit" id = "send-button"> Send </button>
         </div>
+        <button class = "leaveButton" type = "button" id = "leave-button"> leave </button>
     </form>
 </div>
 
 <script>
     const joinRoomButton = document.getElementById ("room-button")
+    const leaveRoomButton = document.getElementById ("leave-button")
     const messageInput = document.getElementById ("message-input")
     const roomInput = document.getElementById ("room-input")
     const form = document.getElementById ("form")
 
     const socket = io('http://localhost:3000')
 
-    socket.on('connect', () => {
-        displayMessage(`You connected with id: ${socket.id}`)
-        displayRoomList("공개방")
-    })
+    const publicRoom = "public";
+    var nickname, email, visit;
+    var userId = getCookie('userId');
+    var myVisit = '';
+
+    $.ajax({
+        url: '/user/handshake',
+        async: true,
+        type: 'POST',
+        data: {
+            userId: userId,
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (data.status == 1) {
+                nickname = data.user.nickname;
+                email = data.user.email;
+                myVisit = data.user.uuid;
+                console.log(data, nickname, 'ajax로 Handshake');
+
+                displayMessage(`You connected with id: ${nickname} (${socket.id})`);
+                displayRoomList("공개방");
+
+            } else {
+                alert(data.msg);
+            }
+        },
+        error: function (err) {
+            alert('FAILURE : ', err.msg);
+        },
+    });
+
+    // socket.on('connect', () => {
+    //     displayMessage(`You connected with id: ${nickname}`)
+    //     displayRoomList("공개방")
+    // })
 
     socket.on('receive-message', message => {
         displayMessage(message)
     })
 
+    socket.on('left-message', message => {
+        displayMessage(message)
+    })
+
     socket.on('updateRoomList', (room) => {
         // if (socket.id == socket.adapter.rooms.)
+
         displayRoomList(room)
         console.log('방 생성:', room)
-    });
-
-    socket.on('disconnect', () => {
-        console.log('서버와 연결이 끊어짐');
     });
 
     form.addEventListener("submit", e => {
@@ -63,7 +98,14 @@
         socket.emit("join-room", room, message => {
             displayMessage(message)
             console.log(room, '룸 정보')
+            // roomInput.value = "";
         })
+    })
+
+    leaveRoomButton.addEventListener("click", () => {
+        const room = roomInput.value
+        socket.emit("leave-room", room)
+        console.log(room, '방 나가기')
     })
 
     function displayMessage(message) {
