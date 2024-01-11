@@ -22,8 +22,6 @@ router.get("/", (req, res) => {
 })
 
 io.on("connection", socket => {
-    console.log(socket.id);
-    console.log("이거 아이디");
     socket.on("send-message", (message, room) => {
         if (room === ''){
             socket.broadcast.emit("receive-message", message)
@@ -36,9 +34,10 @@ io.on("connection", socket => {
     socket.on("join-room", (room, cb) =>{
         socket.join(room)
         rooms.push(room) //rooms = []; 리스트에 룸 추가
-        io.emit('updateRoomList', room) // 클라이언트에게 업데이트된 방 목록을 전송
-        console.log(rooms);
+        // console.log(rooms,'이거방정보', rooms.length);
+        console.log(socket.adapter.rooms, "방정보와 유저수");
         cb(`Joined ${room} room`)
+        socket.emit('updateRoomList', room); //해당 소켓에게만 업데이트된 방 목록을 전송
     })
 })
 

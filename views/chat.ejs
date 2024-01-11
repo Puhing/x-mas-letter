@@ -29,6 +29,7 @@
 
     socket.on('connect', () => {
         displayMessage(`You connected with id: ${socket.id}`)
+        displayRoomList("공개방")
     })
 
     socket.on('receive-message', message => {
@@ -36,8 +37,13 @@
     })
 
     socket.on('updateRoomList', (room) => {
+        // if (socket.id == socket.adapter.rooms.)
         displayRoomList(room)
         console.log('방 생성:', room)
+    });
+
+    socket.on('disconnect', () => {
+        console.log('서버와 연결이 끊어짐');
     });
 
     form.addEventListener("submit", e => {
