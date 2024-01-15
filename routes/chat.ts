@@ -33,15 +33,65 @@ router.get("/", (req, res) => {
     });
 })
 
+router.post('/save_chat', async (req, res) => {
+    const { id, nickname, content, socketId, visit, roomNow } = req.body;
+    const directory = 'public/uploads';
+    console.log(req.body, '텍스트 req 확인용');
+    
+    try {
+        const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
+        if(_user){
+            const userId = _user.userId;
+            
+            if (userId && !isNaN(userId)) {
+                let result = await db.query(`INSERT INTO TB_USER_CHAT (socketId, content, type, addedAt, nickname, roomNow) VALUES (?, ?, 1, NOW(), ?, ?)`, [
+                    socketId,
+                    content,
+                    nickname,
+                    roomNow
+                ]);
+                if (result.insertId > 0) {
+
+                    fs.writeFile(`${directory}/chat_${result.insertId}.txt`, content, (err) => {
+                        if (err) {
+                            console.error('Error while writing file:', err);
+                            return res.json({ status: -1, msg: 'Failed to save chat text file' });
+                        }
+                        console.log('Chat text file created');
+                        return res.json({ status: 1, msg: 'File saved' });
+                    });
+                } else {
+                    throw 'Cannot insert TB_USER_CHAT';
+                }
+            }
+        }else {
+            return res.json({ status: -1, msg: 'Failed' });
+        }
+    } catch (err) {
+        console.log('error : ', err);
+        return res.json({ status: -1, msg: 'Failed' });
+    }
+});
+
 io.on("connection", socket => {
+
+    socket.on("join", (publicRoom) => {
+        // 특정 방에 입장
+        socket.join(publicRoom);
+        // 클라이언트에게 방에 입장했다는 신호를 보냄
+        io.to(socket.id).emit("joined", publicRoom);
+        console.log(socket.adapter.rooms, "입장확인")
+    });
     
     socket.on("send-message", (message, room) => {
         if (room === ''){
-            socket.broadcast.emit("receive-message", message)
-            console.log(message)
+            socket.to("public").emit("receive-message", message)
+            console.log(message, "여기보슈", room)
+            console.log(socket.adapter.rooms, "퍼블릭방")
         } else {
             socket.to(room).emit("receive-message", message)
-            console.log(message)
+            console.log(message, "여기보세에여여2", room)
+            console.log(socket.adapter.rooms, "방정보")
         }
     })
     socket.on("join-room", (room, cb) =>{

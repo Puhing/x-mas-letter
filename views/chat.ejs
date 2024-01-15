@@ -3,7 +3,12 @@
 <div class = "chatPage">
     <div class = topChat>
         <div class = "roomList" id="room-list"></div>
-        <div class = "chatSpace" id="message-container"></div>
+        <div class = "chatSpace" id="message-container">
+            <div class = "topToolBar" id="toptool-bar">
+                <div class = "currentRoom" id="current-room">현재 채팅방:</div>
+                <button class = "leaveButton" type = "button" id = "leave-button"> leave </button>
+            </div>
+        </div>
     </div>
     <form class = "formBox" id = "form">
         <div class = "roomForm" id = "room-form">
@@ -16,7 +21,13 @@
             <input class = "messageInput" type = "text" id = "message-input"></input>
             <button class = "sendButton" type = "submit" id = "send-button"> Send </button>
         </div>
-        <button class = "leaveButton" type = "button" id = "leave-button"> leave </button>
+        <div class="fileForm">
+            <!-- <input class = "fileInput" type="file" id="file-input" accept="audio/*,image/*" /> -->
+            <div class = "fileName">첨부파일</div>
+            <label class = "fileSearch" for="file">파일찾기</label> 
+            <input class = "fileInput" type="file" id="file">
+            <button class = "fileSend" onclick="sendFile()">Send File</button>
+        </div>
     </form>
 </div>
 
@@ -30,83 +41,112 @@
     const socket = io('http://localhost:3000')
 
     const publicRoom = "public";
+    const existingRooms = [];
     var nickname, email, visit;
     var userId = getCookie('userId');
-    var myVisit = '';
+    var messageForSave = '';
+    var nicknameForSave = '';
+    var url = new URL(location.href);
+    var roomNow = 'public';
+    
+    visit = url.searchParams.get('visit');
 
-    $.ajax({
-        url: '/user/handshake',
-        async: true,
-        type: 'POST',
-        data: {
-            userId: userId,
-        },
-        dataType: 'json',
-        success: function (data) {
-            if (data.status == 1) {
-                nickname = data.user.nickname;
-                email = data.user.email;
-                myVisit = data.user.uuid;
-                console.log(data, nickname, 'ajax로 Handshake');
+    window.onload = function () {
+        $.ajax({
+            url: '/user/handshake',
+            async: true,
+            type: 'POST',
+            data: {
+                userId: userId,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 1) {
+                    nickname = data.user.nickname;
+                    email = data.user.email;
+                    visit = data.user.uuid;
+                    console.log(data, nickname, 'ajax로 Handshake');
 
-                displayMessage(`You connected with id: ${nickname} (${socket.id})`);
-                displayRoomList("공개방");
+                    nicknameForSave = nickname
 
-            } else {
-                alert(data.msg);
-            }
-        },
-        error: function (err) {
-            alert('FAILURE : ', err.msg);
-        },
-    });
+                    displayMessage(`You connected with id: ${nickname} (${socket.id})`);
+                    displayRoomList("public");
 
-    // socket.on('connect', () => {
-    //     displayMessage(`You connected with id: ${nickname}`)
-    //     displayRoomList("공개방")
-    // })
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (err) {
+                alert('FAILURE : ', err.msg);
+            },
+        });
 
-    socket.on('receive-message', message => {
-        displayMessage(message)
-    })
+        // socket.on('connect', () => {
+        //     displayMessage(`You connected with id: ${nickname}`)
+        //     displayRoomList("공개방")
+        // })
 
-    socket.on('left-message', message => {
-        displayMessage(message)
-    })
+        socket.emit("join", publicRoom);
 
-    socket.on('updateRoomList', (room) => {
-        // if (socket.id == socket.adapter.rooms.)
+        socket.on("joined", (publicRoom) => {
+            console.log(`처음방입장: ${publicRoom}`);
+            $('#current-room')[0].innerHTML = `현재 채팅방: ${publicRoom}`;
+        });
 
-        displayRoomList(room)
-        console.log('방 생성:', room)
-    });
-
-    form.addEventListener("submit", e => {
-        e.preventDefault()
-        const message = messageInput.value
-        const room = roomInput.value
-
-        if (message === "") return
-        displayMessage(message)
-        socket.emit("send-message", message, room)
-
-        messageInput.value = ""
-    })
-
-    joinRoomButton.addEventListener("click", () => {
-        const room = roomInput.value
-        socket.emit("join-room", room, message => {
+        socket.on('receive-message', message => {
             displayMessage(message)
-            console.log(room, '룸 정보')
-            // roomInput.value = "";
         })
-    })
 
-    leaveRoomButton.addEventListener("click", () => {
-        const room = roomInput.value
-        socket.emit("leave-room", room)
-        console.log(room, '방 나가기')
-    })
+        socket.on('left-message', message => {
+            displayMessage(message)
+        })
+
+        socket.on('updateRoomList', (room) => {
+            // if (socket.id == socket.adapter.rooms.)
+
+            displayRoomList(room)
+            console.log('방 생성:', room)
+            console.log('방 목록:', existingRooms)
+        });
+
+        form.addEventListener("submit", e => {
+            e.preventDefault()
+            const message = messageInput.value
+            const room = roomInput.value
+
+            if (message === "") return
+            displayMessage(message)
+            socket.emit("send-message", message, room)
+            messageForSave = message;
+            saveChat()
+
+            messageInput.value = ""
+        })
+
+        joinRoomButton.addEventListener("click", () => {
+            const room = roomInput.value
+            socket.emit("join-room", room, message => {
+                displayMessage(message)
+                console.log(room, '룸 정보')
+                $('#current-room')[0].innerHTML = `현재 채팅방: ${room}`;
+                roomNow = room;
+                // roomInput.value = "";
+            })
+        })
+
+        leaveRoomButton.addEventListener("click", () => {
+            removeRoomList(roomNow)
+            socket.emit("leave-room", roomNow)
+            roomNow = existingRooms[existingRooms.length - 1];
+            $('#current-room')[0].innerHTML = `현재 채팅방: ${roomNow}`;
+            console.log(roomNow, '방 나가기')
+        })
+
+        $("#file").on('change',function(){
+            var changeFileName = $("#file").val();
+            $(".fileName")[0].innerHTML = changeFileName;
+        });
+    }
 
     function displayMessage(message) {
         const div = document.createElement("div")
@@ -115,9 +155,65 @@
     }
 
     function displayRoomList(room) {
+
+        if (existingRooms.includes(room)) {
+            // 이미 존재하는 방이면 아무 작업도 하지 않음
+            $('#current-room')[0].innerHTML = `현재 채팅방: ${room}`;
+            return;
+        }
         const div = document.createElement("div")
         div.textContent = `방이름: ${room}`
+        div.id = `room-${room}`; // 고유한 id 부여
+
+        div.addEventListener("click", function() {
+            socket.emit("join-room", room, message => {
+                displayMessage(message)
+                $('#current-room')[0].innerHTML = `현재 채팅방: ${room}`;
+                roomNow = room;
+                console.log(room, '룸 정보22')
+                // roomInput.value = "";
+            })
+            alert(`클릭한 방: ${room}`);
+        });
+
         document.getElementById("room-list").append(div)
+
+        existingRooms.push(room);
+    }
+
+    function removeRoomList(room) {
+        const divToRemove = document.getElementById(`room-${room}`);
+        if (divToRemove) {
+            document.getElementById("room-list").removeChild(divToRemove);
+            // 배열에서도 제거
+            existingRooms.splice(existingRooms.indexOf(room), 1);
+        }
+    }
+
+    function saveChat() {
+        $.ajax({
+            url: '/chat/save_chat',
+            async: true,
+            type: 'POST',
+            data: {
+                nickname: nicknameForSave,
+                content: messageForSave,
+                socketId: socket.id,
+                visit: visit,
+                roomNow: roomNow,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.status == 1) {
+                    console.log(roomNow, '성공', data)
+                } else {
+                    console.log(roomNow, '엥', data.msg);
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+            },
+        });
     }
 
 </script>

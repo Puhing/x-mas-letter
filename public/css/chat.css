@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 70%;
+  height: 80%;
 }
 .chatPage .topChat .roomList {
   margin-top: 5%;
@@ -24,6 +24,20 @@
   background-color: palevioletred;
   width: 10%;
 }
+.chatPage .topChat .roomList div {
+  cursor: pointer; /* 마우스 커서를 손가락 모양으로 변경 */
+  padding: 10px;
+  margin: 5px;
+  background-color: #f0f0f0;
+  font-size: small;
+  border-radius: 5px;
+  transition: background-color 0.3s ease; /* 배경색 변경 시 부드러운 효과를 위한 transition */
+}
+
+/* 클릭한 상태일 때의 스타일 */
+.chatPage .topChat .roomList div:hover {
+  background-color: #d0d0d0;
+}
 .chatPage .topChat .chatSpace {
   margin-top: 5%;
   margin-right: 50px;
@@ -35,8 +49,27 @@
   background-color: #ffffff;
   width: 90%;
 }
+.chatPage .topChat .chatSpace .topToolBar {
+  display: flex;
+  flex-flow: row;
+  background-color: #ecebeb;
+}
+.chatPage .topChat .chatSpace .currentRoom  {
+  background-color: rgb(142, 51, 83);
+  display: flex;
+  flex-direction: row;
+  color: #fff;
+  width: 90%;
+}
+.chatPage .topChat .chatSpace .leaveButton  {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  width: 10%;
+}
 .chatPage .topChat .chatSpace div {
-  background-color: #ccc;
+  background-color: #ecebeb;
   padding: 5px;
 }
 .chatPage .formBox {
@@ -45,7 +78,7 @@
   justify-content: flex-start;
   text-align: center;
   width: 100%;
-  height: 30%;
+  height: 20%;
 }
 .chatPage .formBox .roomForm {
   display: flex;
@@ -56,7 +89,7 @@
   text-align: center;
   margin-left: 50px;
   width: 10%;
-  height: 30%;
+  height: 40%;
 }
 .chatPage .formBox .roomForm .roomLabel {
   /* text-align: left; */
@@ -93,31 +126,94 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    border-bottom-right-radius: 20px;
     text-align: center;
     border-left: 1px solid lightgrey;
     box-shadow: 1px 1px 3px 1px #6b6b6d;
-    margin-right: 50px;
-    width: 90%;
-    height: 30%;
+    width: 75%;
+    height: 40%;
   }
 .chatPage .formBox .messageForm .messageLabel{
   text-align: left;
   padding-left: 5px;
-  margin-right: 50px;
   background-color: #ffffff;
   width: 100%;
   height: 30%;
 }
 .chatPage .formBox .messageForm .messageInput{
-  margin-right: 50px;
   padding: 5px;
-  border-bottom-right-radius: 20px;
   width: 100%;
   height: 70%;
   border: none;
 }
 .chatPage .formBox .messageForm .sendButton{
   display: none;
+}
+.chatPage .formBox .fileForm {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(142, 51, 83);
+  justify-content: flex-start;
+  border-bottom-right-radius: 20px;
+  box-shadow: 1px 1px 3px 1px #6b6b6d;
+  text-align: center;
+  margin-right: 50px;
+  width: 15%;
+  height: 40%;
+}
+.chatPage .formBox .fileForm .fileName {
+  display: flex;
+  background-color: rgb(185, 65, 109);
+  color: #fff;
+  font-size: small;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 33%;
+  cursor: default;
+  white-space: nowrap;       /* 텍스트를 한 줄로 표시 */
+  overflow: hidden;          /* 오버플로우된 부분을 숨김 */
+}
+.chatPage .formBox .fileForm .fileSearch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: small;
+  width: 100%;
+  height: 33%;
+
+  cursor: pointer;
+  &:hover {
+    scale: 1.03;
+  }
+  &:active {
+    scale: 1.015;
+  }
+}
+.chatPage .formBox .fileForm .fileInput {
+  display: none;
+}
+.chatPage .formBox .fileForm .fileSend {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  display: flex;
+  
+  border-bottom-right-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 34%;
+  color: #fff;
+  background-color: rgb(84, 29, 49);
+
+  cursor: pointer;
+  &:hover {
+    scale: 1.03;
+  }
+  &:active {
+    scale: 1.015;
+  }
 }
 /*# sourceMappingURL=chat.css.map
