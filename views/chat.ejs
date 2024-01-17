@@ -16,17 +16,19 @@
             <input class = "roomInput" type = "text" id = "room-input"></input>
             <button class = "joinButton" type = "button" id = "room-button"> Join </button>
         </div>
+        <div class="fileForm">
+            <!-- <input class = "fileInput" type="file" id="file-input" accept="audio/*,image/*" /> -->
+            <div class = "fileName">첨부파일</div>
+            <label class = "fileSearch" for="file-input">
+                <img src = img/plus.png>
+            </label> 
+            <input class = "fileInput" type="file" id="file-input">
+            <button class = "fileSend" onclick="sendFile()">Send File</button>
+        </div>
         <div class = "messageForm" id = "message-form">
             <label class = "messageLabel" for = "message-input"> Message </label>
             <input class = "messageInput" type = "text" id = "message-input"></input>
             <button class = "sendButton" type = "submit" id = "send-button"> Send </button>
-        </div>
-        <div class="fileForm">
-            <!-- <input class = "fileInput" type="file" id="file-input" accept="audio/*,image/*" /> -->
-            <div class = "fileName">첨부파일</div>
-            <label class = "fileSearch" for="file">파일찾기</label> 
-            <input class = "fileInput" type="file" id="file">
-            <button class = "fileSend" onclick="sendFile()">Send File</button>
         </div>
     </form>
 </div>
@@ -37,6 +39,7 @@
     const messageInput = document.getElementById ("message-input")
     const roomInput = document.getElementById ("room-input")
     const form = document.getElementById ("form")
+    const fileInput = document.getElementById('file-input');
 
     const socket = io('http://localhost:3000')
 
@@ -109,6 +112,36 @@
             console.log('방 목록:', existingRooms)
         });
 
+        socket.on('receive-file', (fileData) => {
+            const { type, data } = fileData;
+
+            // Handle different file types
+            switch (type) {
+            case 'audio':
+                // Handle audio file
+                displayAudio(data);
+                saveAudio(data);
+                break;
+            case 'image':
+                // Handle image file
+                displayImage(data);
+                saveImg(data);
+                // socket.emit('save-img', data)
+                break;
+            case 'webm':
+                displayVideo(data); // WebM 파일을 오디오로 처리
+                saveVideo(data);
+                break;
+            case 'video':
+                // Handle video file
+                displayVideo(data);
+                saveVideo(data);
+                break;
+            default:
+                console.log('Unsupported file type');
+            }
+        });
+
         form.addEventListener("submit", e => {
             e.preventDefault()
             const message = messageInput.value
@@ -142,9 +175,13 @@
             console.log(roomNow, '방 나가기')
         })
 
-        $("#file").on('change',function(){
-            var changeFileName = $("#file").val();
+        $("#file-input").on('change',function(){
+            var changeFileName = $("#file-input").val();
             $(".fileName")[0].innerHTML = changeFileName;
+        });
+
+        fileInput.addEventListener('change', () => {
+            sendFile();
         });
     }
 
@@ -214,6 +251,161 @@
                 console.log('FAILURE : ', err.msg);
             },
         });
+    }
+
+    function saveImg(data) {
+        var fd = new FormData();
+        const blob = dataURItoBlob(data);
+
+        fd.append('nickname', nicknameForSave);
+        fd.append('file', blob);
+        fd.append('socketId', socket.id);
+        fd.append('visit', visit);
+        fd.append('roomNow', roomNow);
+
+        $.ajax({
+            url: '/chat/save_img',
+            async: true,
+            type: 'POST',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    console.log(roomNow, '성공', data)
+                } else {
+                    console.log(roomNow, '엥', data.msg);
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+            },
+        });
+    }
+
+    function dataURItoBlob(dataURI) {
+    // dataURI에서 콤마 뒤의 데이터 부분을 가져옵니다.
+    const byteString = atob(dataURI.split(',')[1]);
+
+    // ArrayBuffer를 생성합니다.
+    const ab = new ArrayBuffer(byteString.length);
+
+    // // ArrayBuffer에 대한 뷰를 생성합니다.
+    // const ia = new Uint8Array(ab);
+
+    // // 뷰에 데이터를 복사합니다.
+    // for (let i = 0; i < byteString.length; i++) {
+    //     ia[i] = byteString.charCodeAt(i);
+    // }
+
+    // Blob 객체를 반환합니다.
+    return new Blob([ab], { type: 'image/png' });
+    }
+
+    function saveAudio(data) {
+        var audio = [data] ;
+        var fd = new FormData();
+        const blob = new Blob(audio, { type: 'audio/aac' });
+
+        fd.append('nickname', nicknameForSave);
+        fd.append('file', blob);
+        fd.append('socketId', socket.id);
+        fd.append('visit', visit);
+        fd.append('roomNow', roomNow);
+        console.log(fd, '폼데데데데데이이이이이타타타타타');
+
+        $.ajax({
+            url: '/chat/save_audio',
+            async: true,
+            type: 'POST',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    console.log(roomNow, '성공', data)
+                } else {
+                    console.log(roomNow, '엥', data.msg);
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+            },
+        });
+    }
+
+    function saveVideo(data) {
+        var audio = [data] ;
+        var fd = new FormData();
+        const blob = new Blob(audio, { type: 'audio/webm' });
+
+        fd.append('nickname', nicknameForSave);
+        fd.append('file', blob);
+        fd.append('socketId', socket.id);
+        fd.append('visit', visit);
+        fd.append('roomNow', roomNow);
+        console.log(fd, '폼데데데데데이이이이이타타타타타');
+
+        $.ajax({
+            url: '/chat/save_video',
+            async: true,
+            type: 'POST',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.status == 1) {
+                    console.log(roomNow, '성공', data)
+                } else {
+                    console.log(roomNow, '엥', data.msg);
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+            },
+        });
+    }
+
+    function sendFile() {
+        const file = fileInput.files[0];
+        console.log(fileInput.files[0], '파일인풋정보');
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const base64Data = e.target.result;
+                const fileType = file.type.split('/')[0]; // Extract file type (audio or image)
+
+                // Send file data to the server
+                socket.emit('send-file', { type: fileType, data: base64Data });
+            };
+
+            reader.readAsDataURL(file);
+        } else {
+            alert('Please choose a file first.');
+        }
+    }
+
+    // Display audio in the chat
+    function displayAudio(data) {
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.src = data;
+        document.getElementById("message-container").append(audio);
+    }
+
+    // Display image in the chat
+    function displayImage(data) {
+        const img = document.createElement('img');
+        img.src = data;
+        document.getElementById("message-container").append(img);
+    }
+
+    function displayVideo(data) {
+        const video = document.createElement('video');
+        video.controls = true;
+        video.src = data;
+        document.getElementById('message-container').append(video);
     }
 
 </script>

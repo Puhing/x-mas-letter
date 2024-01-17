@@ -4,6 +4,7 @@ import Server from "socket.io";
 import { Socket } from "socket.io";
 import fs from 'fs';
 import bodyParser from 'body-parser';
+import path from 'path';
 
 //
 import MySQL from '../MySQL';
@@ -34,9 +35,8 @@ router.get("/", (req, res) => {
 })
 
 router.post('/save_chat', async (req, res) => {
-    const { id, nickname, content, socketId, visit, roomNow } = req.body;
+    const { nickname, content, socketId, visit, roomNow } = req.body;
     const directory = 'public/uploads';
-    console.log(req.body, '텍스트 req 확인용');
     
     try {
         const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
@@ -65,6 +65,101 @@ router.post('/save_chat', async (req, res) => {
                 }
             }
         }else {
+            return res.json({ status: -1, msg: 'Failed' });
+        }
+    } catch (err) {
+        console.log('error : ', err);
+        return res.json({ status: -1, msg: 'Failed' });
+    }
+});
+
+router.post('/save_img', upload.single('file'), async (req, res) => {
+    const { nickname, socketId, visit, roomNow } = req.body;
+    const directory = 'public/uploads';
+    
+    try {
+        const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
+        if(_user){
+            const userId = _user.userId;
+            
+            if (userId && !isNaN(userId)) {
+                let result = await db.query(`INSERT INTO TB_USER_CHAT (socketId, content, type, addedAt, nickname, roomNow) VALUES (?, ?, 1, NOW(), ?, ?)`, [
+                    socketId,
+                    req.file.path,
+                    nickname,
+                    roomNow,
+                ]);
+                if (result.insertId > 0) {
+                    return res.json({ status: 1, msg: 'Success' });
+                } else {
+                    throw 'Cannot insert TB_USER_CHAT';
+                }
+            }
+        }else{
+            return res.json({ status: -1, msg: 'Failed' });
+        }
+    } catch (err) {
+        console.log('error : ', err);
+        return res.json({ status: -1, msg: 'Failed' });
+    }
+});
+
+router.post('/save_audio', upload.single('file'), async (req, res) => {
+    const { nickname, socketId, visit, roomNow } = req.body;
+    const directory = 'public/uploads';
+    console.log(req.file.path, 'ㅁㄴ임이ㅏㅁㄴ엄나ㅣ어');
+    
+    try {
+        const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
+        if(_user){
+            const userId = _user.userId;
+            
+            if (userId && !isNaN(userId)) {
+                let result = await db.query(`INSERT INTO TB_USER_CHAT (socketId, content, type, addedAt, nickname, roomNow) VALUES (?, ?, 2, NOW(), ?, ?)`, [
+                    socketId,
+                    req.file.path,
+                    nickname,
+                    roomNow,
+                ]);
+                if (result.insertId > 0) {
+                    return res.json({ status: 1, msg: 'Success' });
+                } else {
+                    throw 'Cannot insert TB_USER_CHAT';
+                }
+            }
+        }else{
+            return res.json({ status: -1, msg: 'Failed' });
+        }
+    } catch (err) {
+        console.log('error : ', err);
+        return res.json({ status: -1, msg: 'Failed' });
+    }
+});
+
+router.post('/save_video', upload.single('file'), async (req, res) => {
+    const { nickname, socketId, visit, roomNow } = req.body;
+    const directory = 'public/uploads';
+    console.log(req.file.path, 'ㅁㄴ임이ㅏㅁㄴ엄나ㅣ어');
+    
+    try {
+        const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
+        if(_user){
+            const userId = _user.userId;
+            
+            if (userId && !isNaN(userId)) {
+                let result = await db.query(`INSERT INTO TB_USER_CHAT (socketId, content, type, addedAt, nickname, roomNow) VALUES (?, ?, 2, NOW(), ?, ?)`, [
+                    socketId,
+                    req.file.path,
+                    nickname,
+                    roomNow,
+                ]);
+                if (result.insertId > 0) {
+                    return res.json({ status: 1, msg: 'Success' });
+                } else {
+                    throw 'Cannot insert TB_USER_CHAT';
+                }
+            }
+        }else{
             return res.json({ status: -1, msg: 'Failed' });
         }
     } catch (err) {
@@ -116,6 +211,55 @@ io.on("connection", socket => {
         socket.leave(room);
         socket.to(room).emit('left-message', `User ${socket.id} left room ${room}`);
     });
+
+    socket.on('send-file', (fileData) => {
+        const { type, data } = fileData;
+    
+        // Handle different file types
+        switch (type) {
+            case 'audio':
+                // Handle audio file
+                console.log('Received audio file data');
+                break;
+            case 'image':
+                // Handle image file
+                console.log('Received image file data');
+                break;
+            case 'webm':
+                // Handle webm file
+                console.log('Received webm file data');
+                break;
+            case 'video':
+                // Handle video file
+                console.log('Received video file data');
+                break;
+            default:
+                console.log('Unsupported file type');
+                return;
+        }
+    
+        // Broadcast the file data to all connected clients
+        io.emit('receive-file', { type, data });
+    });
+
+    // socket.on('send-audio', (data) => {
+    //     const fileName = 'receivedVoice.wav'; // 저장할 파일명
+    //     const base64Data = data.replace(/^data:audio\/wav;base64,/, '');
+    //     fs.writeFile(`public/${fileName}`, base64Data, 'base64', (err) => {
+    //         if (err) throw err;
+    //         console.log('Voice file saved!');
+    //     });
+    // });
+
+    // socket.on('save-img', (data) => {
+    //     const fileName = 'receivedImage.png'; // 저장할 파일명
+    //     const base64Data = data.replace(/^data:image\/png;base64,/, '');
+
+    //     fs.writeFile(`public/uploads/${fileName}`, base64Data, 'base64', (err) => {
+    //         if (err) throw err;
+    //         console.log('Image file saved!');
+    //     });
+    // });
 })
 
 export default router;

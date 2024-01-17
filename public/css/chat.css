@@ -64,6 +64,7 @@
 .chatPage .topChat .chatSpace .leaveButton  {
   display: flex;
   justify-content: center;
+  border-top-right-radius: 20px;
   align-items: center;
   background-color: #fff;
   width: 10%;
@@ -71,6 +72,12 @@
 .chatPage .topChat .chatSpace div {
   background-color: #ecebeb;
   padding: 5px;
+}
+.chatPage .topChat .chatSpace img {
+  max-width: 40%; /* 이미지의 최대 너비를 부모 요소의 100%로 설정 */
+  height: auto; /* 이미지의 높이를 자동으로 조절하여 가로 비율을 유지 */
+  display: block; /* 이미지 간의 간격을 없애기 위해 블록 요소로 설정 */
+  margin: 10px 0; /* 이미지 간의 간격을 설정 */
 }
 .chatPage .formBox {
   display: flex;
@@ -129,7 +136,9 @@
     text-align: center;
     border-left: 1px solid lightgrey;
     box-shadow: 1px 1px 3px 1px #6b6b6d;
-    width: 75%;
+    border-bottom-right-radius: 20px;
+    margin-right: 50px;
+    width: 85%;
     height: 40%;
   }
 .chatPage .formBox .messageForm .messageLabel{
@@ -144,6 +153,7 @@
   width: 100%;
   height: 70%;
   border: none;
+  border-bottom-right-radius: 20px;
 }
 .chatPage .formBox .messageForm .sendButton{
   display: none;
@@ -151,17 +161,16 @@
 .chatPage .formBox .fileForm {
   display: flex;
   flex-direction: column;
-  background-color: rgb(142, 51, 83);
+  background-color: rgb(84, 29, 49);
   justify-content: flex-start;
-  border-bottom-right-radius: 20px;
   box-shadow: 1px 1px 3px 1px #6b6b6d;
   text-align: center;
-  margin-right: 50px;
-  width: 15%;
+  width: 5%;
   height: 40%;
 }
 .chatPage .formBox .fileForm .fileName {
-  display: flex;
+  display: none;
+  /* display: flex;
   background-color: rgb(185, 65, 109);
   color: #fff;
   font-size: small;
@@ -170,17 +179,17 @@
   width: 100%;
   height: 33%;
   cursor: default;
-  white-space: nowrap;       /* 텍스트를 한 줄로 표시 */
-  overflow: hidden;          /* 오버플로우된 부분을 숨김 */
+  white-space: nowrap;       
+  overflow: hidden;           */
 }
 .chatPage .formBox .fileForm .fileSearch {
   display: flex;
   justify-content: center;
   align-items: center;
   color: #fff;
-  font-size: small;
+  font-size: medium;
   width: 100%;
-  height: 33%;
+  height: 100%;
 
   cursor: pointer;
   &:hover {
@@ -190,11 +199,20 @@
     scale: 1.015;
   }
 }
+.chatPage .formBox .fileForm .fileSearch img{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  width: 20%;
+  height: auto;
+}
 .chatPage .formBox .fileForm .fileInput {
   display: none;
 }
 .chatPage .formBox .fileForm .fileSend {
-  margin: 0;
+  display: none;
+  /* margin: 0;
   padding: 0;
   border: none;
   outline: none;
@@ -214,6 +232,6 @@
   }
   &:active {
     scale: 1.015;
-  }
+  } */
 }
 /*# sourceMappingURL=chat.css.map

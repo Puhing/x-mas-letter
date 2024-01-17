@@ -27,13 +27,6 @@ router.post('/save_voice', upload.single('file'), async (req, res) => {
     const { nickname, visit } = req.body;
     const directory = 'public/uploads';
 
-    // if (!fs.existsSync(directory)) {
-    //     fs.mkdirSync(directory);
-    //     console.log(`${directory} 디렉토리가 생성되었습니다.`);
-    // } else {
-    //     // console.log(`${directory} 디렉토리가 이미 존재합니다.`);
-    // }
-
     try {
         const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
         if(_user){
