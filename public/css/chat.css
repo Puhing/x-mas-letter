@@ -49,6 +49,37 @@
   background-color: #ffffff;
   width: 90%;
 }
+
+.chatPage .topChat .chatSpace .messageBox {
+  display: flex;
+  flex-direction: column;
+}
+.chatPage .topChat .chatSpace .myMessage {
+  display: flex;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: 20px;
+  background-color: palegoldenrod;
+  text-align: end;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+  color: black;
+}
+.chatPage .topChat .chatSpace .otherMessage {
+  display: flex;
+  width: fit-content;
+  margin-right: auto;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: rgb(81, 81, 81);
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: start;
+  color: #fff;
+}
 .chatPage .topChat .chatSpace .topToolBar {
   display: flex;
   flex-flow: row;

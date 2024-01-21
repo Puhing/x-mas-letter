@@ -8,6 +8,8 @@
                 <div class = "currentRoom" id="current-room">현재 채팅방:</div>
                 <button class = "leaveButton" type = "button" id = "leave-button"> leave </button>
             </div>
+            <div class = "connectNow" id="connect-now"></div>
+            <div class = "messageBox" id="message-box"></div>
         </div>
     </div>
     <form class = "formBox" id = "form">
@@ -23,7 +25,7 @@
                 <img src = img/plus.png>
             </label> 
             <input class = "fileInput" type="file" id="file-input">
-            <button class = "fileSend" onclick="sendFile()">Send File</button>
+            <!-- <button class = "fileSend" onclick="sendFile()">Send File</button> -->
         </div>
         <div class = "messageForm" id = "message-form">
             <label class = "messageLabel" for = "message-input"> Message </label>
@@ -45,12 +47,15 @@
 
     const publicRoom = "public";
     const existingRooms = [];
+
     var nickname, email, visit;
     var userId = getCookie('userId');
     var messageForSave = '';
     var nicknameForSave = '';
+    // var roomForSave = '';
     var url = new URL(location.href);
     var roomNow = 'public';
+    var myId;
     
     visit = url.searchParams.get('visit');
 
@@ -70,10 +75,14 @@
                     visit = data.user.uuid;
                     console.log(data, nickname, 'ajax로 Handshake');
 
-                    nicknameForSave = nickname
+                    nicknameForSave = data.user.nickname;
 
-                    displayMessage(`You connected with id: ${nickname} (${socket.id})`);
+                    displayConnect(`You connected with id: ${nickname} (${socket.id})`);
                     displayRoomList("public");
+
+                    socket.emit("nickname", { nickname: nicknameForSave }, () => {
+                        console.log('닉네임보내기', nicknameForSave)
+                    });
 
                 } else {
                     alert(data.msg);
@@ -89,6 +98,10 @@
         //     displayRoomList("공개방")
         // })
 
+        socket.on("welcome", id => {
+            myId = id;
+        })
+
         socket.emit("join", publicRoom);
 
         socket.on("joined", (publicRoom) => {
@@ -96,8 +109,13 @@
             $('#current-room')[0].innerHTML = `현재 채팅방: ${publicRoom}`;
         });
 
-        socket.on('receive-message', message => {
-            displayMessage(message)
+        socket.on('receive-message', response => {
+            if (response.roomName === roomNow) {
+                displayMessage(`${response.nickname} (${response.userId}): <br> ${response.message}`)
+                console.log('딴놈메세지', response, '딴놈메세지')
+            }else{
+                console.log('딴방 메세지', response, '딴방 메세지')
+            }
         })
 
         socket.on('left-message', message => {
@@ -145,26 +163,27 @@
         form.addEventListener("submit", e => {
             e.preventDefault()
             const message = messageInput.value
-            const room = roomInput.value
 
             if (message === "") return
-            displayMessage(message)
-            socket.emit("send-message", message, room)
+            displayMyMessage(message)
+            socket.emit("send-message", message, roomNow)
+            console.log(roomNow,'특정방메세지보내고픔');
             messageForSave = message;
             saveChat()
 
-            messageInput.value = ""
+            messageInput.value = "";
         })
 
         joinRoomButton.addEventListener("click", () => {
             const room = roomInput.value
-            socket.emit("join-room", room, message => {
+            roomNow = roomInput.value
+            socket.emit("join-room", roomNow, message => {
                 displayMessage(message)
-                console.log(room, '룸 정보')
-                $('#current-room')[0].innerHTML = `현재 채팅방: ${room}`;
+                console.log(roomNow, '룸 정보')
+                $('#current-room')[0].innerHTML = `현재 채팅방: ${roomNow}`;
                 roomNow = room;
-                // roomInput.value = "";
             })
+            roomInput.value = "";
         })
 
         leaveRoomButton.addEventListener("click", () => {
@@ -185,10 +204,33 @@
         });
     }
 
+    function displayConnect(message) {
+        const div = document.createElement("div");
+        div.textContent = message;
+        document.getElementById("connect-now").append(div);
+        div.classList.add("connectNow");
+    }
+
     function displayMessage(message) {
+        const currentDate = new Date();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+
         const div = document.createElement("div")
-        div.textContent = message
-        document.getElementById("message-container").append(div)
+        div.innerHTML = `${message}<br>${hours}:${minutes}`
+        document.getElementById("message-box").append(div)
+        div.classList.add("otherMessage");
+    }
+
+    function displayMyMessage(message) {
+        const currentDate = new Date();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+
+        const div = document.createElement("div")
+        div.innerHTML = `${message}<br>${hours}:${minutes}`
+        document.getElementById("message-box").append(div)
+        div.classList.add("myMessage");
     }
 
     function displayRoomList(room) {
@@ -290,13 +332,13 @@
     // ArrayBuffer를 생성합니다.
     const ab = new ArrayBuffer(byteString.length);
 
-    // // ArrayBuffer에 대한 뷰를 생성합니다.
-    // const ia = new Uint8Array(ab);
+    // ArrayBuffer에 대한 뷰를 생성합니다.
+    const ia = new Uint8Array(ab);
 
-    // // 뷰에 데이터를 복사합니다.
-    // for (let i = 0; i < byteString.length; i++) {
-    //     ia[i] = byteString.charCodeAt(i);
-    // }
+    // 뷰에 데이터를 복사합니다.
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
 
     // Blob 객체를 반환합니다.
     return new Blob([ab], { type: 'image/png' });

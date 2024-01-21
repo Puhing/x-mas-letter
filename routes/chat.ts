@@ -26,7 +26,8 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 // let rooms = [];
 // let ids = [];
-let userNum = 0;
+var userNum = 0;
+var nicknameForSave;
 
 router.get("/", (req, res) => {
     res.render('chat', {
@@ -50,6 +51,7 @@ router.post('/save_chat', async (req, res) => {
                     nickname,
                     roomNow
                 ]);
+
                 if (result.insertId > 0) {
 
                     fs.writeFile(`${directory}/chat_${result.insertId}.txt`, content, (err) => {
@@ -76,7 +78,8 @@ router.post('/save_chat', async (req, res) => {
 router.post('/save_img', upload.single('file'), async (req, res) => {
     const { nickname, socketId, visit, roomNow } = req.body;
     const directory = 'public/uploads';
-    
+    console.log(req.file.path, 'ㅁㄴ임이ㅏㅁㄴ엄나ㅣ어');
+
     try {
         const _user = await db.one(`SELECT userId FROM TB_USER WHERE uuid = ?`, [visit]);
         if(_user){
@@ -170,6 +173,13 @@ router.post('/save_video', upload.single('file'), async (req, res) => {
 
 io.on("connection", socket => {
 
+    socket.emit("welcome", socket.id)
+
+    socket.on("nickname", (data) => {
+        nicknameForSave = data.nickname;
+        console.log('닉이용', data, '닉이용');
+    })
+
     socket.on("join", (publicRoom) => {
         // 특정 방에 입장
         socket.join(publicRoom);
@@ -180,11 +190,21 @@ io.on("connection", socket => {
     
     socket.on("send-message", (message, room) => {
         if (room === ''){
-            socket.to("public").emit("receive-message", message)
+            socket.to("public").emit("receive-message", { 
+                userId: socket.id,
+                message: message,
+                nickname: nicknameForSave,
+                roomName: room
+             })
             console.log(message, "여기보슈", room)
             console.log(socket.adapter.rooms, "퍼블릭방")
         } else {
-            socket.to(room).emit("receive-message", message)
+            socket.to(room).emit("receive-message", { 
+                userId: socket.id,
+                message: message,
+                nickname: nicknameForSave,
+                roomName: room
+             })
             console.log(message, "여기보세에여여2", room)
             console.log(socket.adapter.rooms, "방정보")
         }
