@@ -6,7 +6,7 @@ let storage = multer.diskStorage({
     },
     filename: function (req, file, callback) {
         if (file.mimetype === 'image/png'){
-            callback(null, Date.now() + "_" + file.originalname + ".jpeg");
+            callback(null, Date.now() + "img_" + file.originalname + ".jpeg");
         } else {
             callback(null, Date.now() + "_" + file.originalname + ".webm");
         }

@@ -93,10 +93,40 @@
             },
         });
 
-        // socket.on('connect', () => {
-        //     displayMessage(`You connected with id: ${nickname}`)
-        //     displayRoomList("공개방")
-        // })
+        $.ajax({
+            url: '/chat/backup',
+            async: true,
+            type: 'GET',
+            data: {
+                userId: userId,
+            },
+            success: function (data) {
+                if (data.status == 1) {
+                    console.log("디비에서정보",data,"가져오기")
+                    const socketIds = data.datas.map(item => item.socketId);
+                    const contents = data.datas.map(item => item.content);
+                    const times = data.datas.map(item => item.time);
+                    const nicknames = data.datas.map(item => item.nickname);
+                    const roomNames = data.datas.map(item => item.room);
+                    console.log(socketIds[0] + contents[0] + times [0] + nicknames[0] + roomNames[0], "룸기준데이터 row", data.datas.length);
+                    const noDupRoom = [...new Set(roomNames)];
+                    for (let i = 0; i < noDupRoom.length; i ++) {
+                        displayRoomList(noDupRoom[i])
+                    }
+                    for (let i = 0; i < data.datas.length; i ++) {
+                        if (nicknameForSave === nicknames[i]){
+                            displayMyOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
+                        } else {
+                            displayOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
+                        }
+                    } 
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+                window.location.href = '/';
+            },
+        });
 
         socket.on("welcome", id => {
             myId = id;
@@ -166,7 +196,7 @@
 
             if (message === "") return
             displayMyMessage(message)
-            socket.emit("send-message", message, roomNow)
+            socket.emit("send-message", message, roomNow, nicknameForSave)
             console.log(roomNow,'특정방메세지보내고픔');
             messageForSave = message;
             saveChat()
@@ -222,6 +252,13 @@
         div.classList.add("otherMessage");
     }
 
+    function displayOldMessage(message) {
+        const div = document.createElement("div")
+        div.innerHTML = `${message}`
+        document.getElementById("message-box").append(div)
+        div.classList.add("otherMessage");
+    }
+
     function displayMyMessage(message) {
         const currentDate = new Date();
         const hours = currentDate.getHours();
@@ -229,6 +266,13 @@
 
         const div = document.createElement("div")
         div.innerHTML = `${message}<br>${hours}:${minutes}`
+        document.getElementById("message-box").append(div)
+        div.classList.add("myMessage");
+    }
+
+    function displayMyOldMessage(message) {
+        const div = document.createElement("div")
+        div.innerHTML = `${message}`
         document.getElementById("message-box").append(div)
         div.classList.add("myMessage");
     }
@@ -245,6 +289,10 @@
         div.id = `room-${room}`; // 고유한 id 부여
 
         div.addEventListener("click", function() {
+            if(roomNow !== room){
+                const romoveMessage = document.getElementById("message-box");
+                romoveMessage.remove();
+            }
             socket.emit("join-room", room, message => {
                 displayMessage(message)
                 $('#current-room')[0].innerHTML = `현재 채팅방: ${room}`;

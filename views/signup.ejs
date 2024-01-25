@@ -48,7 +48,7 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.status == 1) {
-                        location.href = '/signup';
+                        location.href = '/mailbox';
                     } else {
                     }
                 },
@@ -118,7 +118,7 @@
                 success: function (data) {
                     if (data.userId) {
                         setCookie('userId', data.userId, 30);
-                        location.href = '/signup';
+                        location.href = '/mailbox';
                     } else {
                         alert('잠시 후에 다시 시도해주세요.');
                     }

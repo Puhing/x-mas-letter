@@ -5,6 +5,7 @@ import { Socket } from "socket.io";
 import fs from 'fs';
 import bodyParser from 'body-parser';
 import path from 'path';
+import { encrypt, decrypt } from '../util/encryption';
 
 //
 import MySQL from '../MySQL';
@@ -34,6 +35,51 @@ router.get("/", (req, res) => {
         title: '채팅방',
     });
 })
+
+router.get('/backup', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        if (userId) {
+            const _userId = decrypt(userId);
+            let user = await db.one(`SELECT * FROM TB_USER WHERE userId = ?`, [_userId]);
+            console.log("백업정보요",userId, _userId, user, "백업정보요")
+            if (user) {
+                let m = await db.many(`SELECT * FROM TB_USER_CHAT`);
+                if (m.length > 0) {
+                    const responseData = m.map(row => ({
+                        socketId: row.socketId,
+                        content: row.content,
+                        time: row.addedAt,
+                        nickname: row.nickname,
+                        room: row.roomNow
+                    }));
+                    // const roomNowValues = responseData.map(row => row.room);
+                    // let mm = await db.many(`SELECT * FROM TB_USER_CHAT WHERE roomNow IN (?)`, [roomNowValues]);
+                    // console.log("엠엠엠엠엠ㅇ멩멩멩멩멩ㅁ에",mm,"엠엠엠엠엠ㅇ멩멩멩멩멩ㅁ에")
+                    // const roomData = m.map(row => ({
+                    //     socketId: row.socketId,
+                    //     content: row.content,
+                    //     time: row.addedAt,
+                    //     nickname: row.nickname,
+                    //     room: row.roomNow
+                    // }));
+                    return res.json({
+                        status: 1,
+                        msg: 'Success',
+                        datas: responseData
+                    });
+                } else {
+                    return res.json({ status: 1, msg: 'Success', data: [] });
+                }
+            } else {
+                throw 'cannot find userId : ' + userId;
+            }
+        }
+    } catch (err) {
+        console.log('error', err);
+    }
+    return res.json({ status: -1, msg: '로그인 해주세요.' });
+});
 
 router.post('/save_chat', async (req, res) => {
     const { nickname, content, socketId, visit, roomNow } = req.body;
@@ -188,12 +234,12 @@ io.on("connection", socket => {
         console.log(socket.adapter.rooms, "입장확인")
     });
     
-    socket.on("send-message", (message, room) => {
+    socket.on("send-message", (message, room, nicknameOther) => {
         if (room === ''){
             socket.to("public").emit("receive-message", { 
                 userId: socket.id,
                 message: message,
-                nickname: nicknameForSave,
+                nickname: nicknameOther,
                 roomName: room
              })
             console.log(message, "여기보슈", room)
@@ -202,10 +248,11 @@ io.on("connection", socket => {
             socket.to(room).emit("receive-message", { 
                 userId: socket.id,
                 message: message,
-                nickname: nicknameForSave,
+                nickname: nicknameOther,
                 roomName: room
              })
             console.log(message, "여기보세에여여2", room)
+            console.log("여기보세에여여333333333333", nicknameOther, "여기보세여여여3333333")
             console.log(socket.adapter.rooms, "방정보")
         }
     })

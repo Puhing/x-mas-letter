@@ -15,6 +15,7 @@ export interface MySQLTransaction {
         printLog?: boolean
     ) => Promise<any | null>;
     one: (sql: string, args: any[], printLog?: boolean) => Promise<any>;
+    many: (sql: string, args: any[], printLog?: boolean) => Promise<any[]>;
     format: (...a) => string;
 }
 const connections = {};
@@ -174,6 +175,9 @@ class MySQL {
             one: (sql: string, args: any[], printLog?: boolean) => {
                 return this.one(sql, args, conn, printLog);
             },
+            many: (sql: string, args: any[], printLog?: boolean) => {
+                return this.many(sql, args, conn, printLog);
+            },
             format: (...a) => this.format(a[0], a[1]),
         };
     }
@@ -198,6 +202,16 @@ class MySQL {
     ): Promise<any> {
         let rows = await this.query(sql, args, conn, print_log);
         return rows[0] as any;
+    }
+
+    async many(
+        sql: string,
+        args?: Array<any>,
+        conn?: PoolConnection,
+        print_log: boolean = false
+    ): Promise<any[] | null> {
+        let rows = await this.query(sql, args, conn, print_log);
+        return rows;
     }
 
     static Initialize() {
