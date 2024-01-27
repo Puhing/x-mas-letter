@@ -15,7 +15,7 @@
     <form class = "formBox" id = "form">
         <div class = "roomForm" id = "room-form">
             <label class = "roomLabel" for = "room-input"> Room </label>
-            <input class = "roomInput" type = "text" id = "room-input"></input>
+            <input class = "roomInput" type = "text" id = "room-input" />
             <button class = "joinButton" type = "button" id = "room-button"> Join </button>
         </div>
         <div class="fileForm">
@@ -46,8 +46,9 @@
     const socket = io('http://localhost:3000')
 
     const publicRoom = "public";
-    const existingRooms = [];
+    var existingRooms = [];
 
+    var socketIds, contents, times, nicknames, roomNames, dataLength;
     var nickname, email, visit;
     var userId = getCookie('userId');
     var messageForSave = '';
@@ -103,22 +104,26 @@
             success: function (data) {
                 if (data.status == 1) {
                     console.log("디비에서정보",data,"가져오기")
-                    const socketIds = data.datas.map(item => item.socketId);
-                    const contents = data.datas.map(item => item.content);
-                    const times = data.datas.map(item => item.time);
-                    const nicknames = data.datas.map(item => item.nickname);
-                    const roomNames = data.datas.map(item => item.room);
+                    socketIds = data.datas.map(item => item.socketId);
+                    contents = data.datas.map(item => item.content);
+                    times = data.datas.map(item => item.time);
+                    nicknames = data.datas.map(item => item.nickname);
+                    roomNames = data.datas.map(item => item.room);
+                    dataLength = data.datas.length;
                     console.log(socketIds[0] + contents[0] + times [0] + nicknames[0] + roomNames[0], "룸기준데이터 row", data.datas.length);
+
                     const noDupRoom = [...new Set(roomNames)];
                     for (let i = 0; i < noDupRoom.length; i ++) {
                         displayRoomList(noDupRoom[i])
                     }
                     for (let i = 0; i < data.datas.length; i ++) {
-                        if (nicknameForSave === nicknames[i]){
-                            displayMyOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
-                        } else {
-                            displayOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
-                        }
+                        if (roomNames[i] === "public") {
+                            if (nicknameForSave === nicknames[i]){
+                                displayMyOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
+                            } else {
+                                displayOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
+                            }
+                        }   
                     } 
                 }
             },
@@ -127,6 +132,8 @@
                 window.location.href = '/';
             },
         });
+
+        setInterval(backupChat, 1000);
 
         socket.on("welcome", id => {
             myId = id;
@@ -250,6 +257,10 @@
         div.innerHTML = `${message}<br>${hours}:${minutes}`
         document.getElementById("message-box").append(div)
         div.classList.add("otherMessage");
+
+        const messageBox2 = document.getElementById("message-container");
+        messageBox2.scrollTop = messageBox2.scrollHeight;
+
     }
 
     function displayOldMessage(message) {
@@ -257,6 +268,9 @@
         div.innerHTML = `${message}`
         document.getElementById("message-box").append(div)
         div.classList.add("otherMessage");
+
+        const messageBox2 = document.getElementById("message-container");
+        messageBox2.scrollTop = messageBox2.scrollHeight;
     }
 
     function displayMyMessage(message) {
@@ -268,6 +282,9 @@
         div.innerHTML = `${message}<br>${hours}:${minutes}`
         document.getElementById("message-box").append(div)
         div.classList.add("myMessage");
+
+        const messageBox2 = document.getElementById("message-container");
+        messageBox2.scrollTop = messageBox2.scrollHeight;
     }
 
     function displayMyOldMessage(message) {
@@ -275,6 +292,9 @@
         div.innerHTML = `${message}`
         document.getElementById("message-box").append(div)
         div.classList.add("myMessage");
+
+        const messageBox2 = document.getElementById("message-container");
+        messageBox2.scrollTop = messageBox2.scrollHeight;
     }
 
     function displayRoomList(room) {
@@ -290,8 +310,10 @@
 
         div.addEventListener("click", function() {
             if(roomNow !== room){
-                const romoveMessage = document.getElementById("message-box");
-                romoveMessage.remove();
+                const removeMessage = document.getElementById("message-box");
+                while (removeMessage.firstChild){
+                    removeMessage.removeChild(removeMessage.firstChild);
+                }
             }
             socket.emit("join-room", room, message => {
                 displayMessage(message)
@@ -300,8 +322,20 @@
                 console.log(room, '룸 정보22')
                 // roomInput.value = "";
             })
-            alert(`클릭한 방: ${room}`);
-        });
+            alert(`클릭한 방: ${room}`)
+
+            console.log(roomNames);
+
+            for (let i = 0; i < dataLength; i ++) {
+                if (roomNames[i] === room) {
+                    if (nicknameForSave === nicknames[i]){
+                        displayMyOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
+                    } else {
+                        displayOldMessage(`${nicknames[i]}: <br> ${contents[i]} <br>`)
+                    }
+                }   
+            } 
+        })
 
         document.getElementById("room-list").append(div)
 
@@ -496,6 +530,32 @@
         video.controls = true;
         video.src = data;
         document.getElementById('message-container').append(video);
+    }
+
+    function backupChat() {
+        $.ajax({
+            url: '/chat/backup',
+            async: true,
+            type: 'GET',
+            data: {
+                userId: userId,
+            },
+            success: function (data) {
+                if (data.status == 1) {
+                    socketIds = data.datas.map(item => item.socketId);
+                    contents = data.datas.map(item => item.content);
+                    times = data.datas.map(item => item.time);
+                    nicknames = data.datas.map(item => item.nickname);
+                    roomNames = data.datas.map(item => item.room);
+                    dataLength = data.datas.length;
+                    console.log(socketIds[0] + contents[0] + times [0] + nicknames[0] + roomNames[0], "1초마다 디비정보 업데이트", data.datas.length);
+                }
+            },
+            error: function (err) {
+                console.log('FAILURE : ', err.msg);
+                window.location.href = '/';
+            },
+        });    
     }
 
 </script>
