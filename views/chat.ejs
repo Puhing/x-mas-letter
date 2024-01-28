@@ -213,13 +213,20 @@
 
         joinRoomButton.addEventListener("click", () => {
             const room = roomInput.value
-            roomNow = roomInput.value
-            socket.emit("join-room", roomNow, message => {
+            socket.emit("join-room", room, message => {
                 displayMessage(message)
-                console.log(roomNow, '룸 정보')
+                console.log(roomNow, room, '룸 정보')
                 $('#current-room')[0].innerHTML = `현재 채팅방: ${roomNow}`;
                 roomNow = room;
             })
+
+            if(roomNow !== room){
+                const removeMessage = document.getElementById("message-box");
+                while (removeMessage.firstChild){
+                    removeMessage.removeChild(removeMessage.firstChild);
+                }
+            }
+            // roomNow = roomInput.value
             roomInput.value = "";
         })
 
@@ -260,7 +267,6 @@
 
         const messageBox2 = document.getElementById("message-container");
         messageBox2.scrollTop = messageBox2.scrollHeight;
-
     }
 
     function displayOldMessage(message) {
